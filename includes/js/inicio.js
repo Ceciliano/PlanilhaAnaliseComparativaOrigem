@@ -89,7 +89,9 @@ function do_file(files) {
 	})();
 
 function detalhar(val){
-	$('.tituloModal').val(val);
+
+	var mySecondTitle=$.parseHTML(val);
+	$('#tituloModal').append(' - ').append(mySecondTitle);
 
 	var HTMLOUT = document.getElementById('corpoDet');
 	HTMLOUT.innerHTML = "";
@@ -135,3 +137,12 @@ function detalhar(val){
 
 	HTMLOUT.innerHTML = htmlstr;
 }
+
+$('.close').click(function(){
+    $("#tituloModal").html("Origem X Destino");
+});
+
+
+$('.btn.btn-secondary').click(function(){
+    $("#tituloModal").html("Origem X Destino");
+});
