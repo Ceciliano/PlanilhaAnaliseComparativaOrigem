@@ -191,6 +191,10 @@ function do_file(files) {
 	}catch(err){ 
 		loader(false); 
 	} 
+
+	document.getElementById('ZZGUID').style.borderColor = ""; 
+	show('alert', false); 
+	show('alert2', false); 
 };
 
 function buscar() {
@@ -201,7 +205,7 @@ function buscar() {
 		show('alert2', false); 
 		loader(true); 
 	}
-	
+
 	try{ 
 		var key = _.findKey(global_wb.Sheets.Sheet1, {
 			v: $('#ZZGUID').val()
@@ -298,6 +302,7 @@ function buscar() {
 		} else {
 			to_html();
 			show('alert2', true); 
+			document.getElementById('ZZGUID').style.borderColor = "red";
 		}
 	}catch(err){ 
 		loader(false); 
@@ -313,6 +318,10 @@ function limpar() {
 	$('#ZZGUID').val("");
 	to_html();
 	loader(false);
+
+	document.getElementById('ZZGUID').style.borderColor = ""; 
+	show('alert', false); 
+	show('alert2', false); 
 };
 
 (function() {
