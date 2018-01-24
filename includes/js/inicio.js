@@ -2,7 +2,6 @@
 /* eslint-env browser */
 /*global Uint8Array, console */
 /*global XLSX */
-/* exported b64it, setfmt */
 /* eslint no-use-before-define:0 */
 var X = XLSX;
 var XW = {
@@ -28,7 +27,11 @@ var process_wb = (function() {
 
 		var htmlstr = "";
 
-		for(var i = 2; i < 30; i++){
+		for(var i = 2; true; i++){
+			if(!workbook.Sheets.Sheet1['A'+i]){
+				break;
+			}
+
 			htmlstr += "<tr>"
 			for(var y = 0; y < colunTitulo.length; y++){
 				if(workbook.Sheets.Sheet1[colunTitulo[y]+i]){
@@ -38,7 +41,55 @@ var process_wb = (function() {
 				}
 			}
 
+			htmlstr += "</td>";
+
 			htmlstr += "<td><button type='submit' class='btn btn-success btn-sm' data-toggle='modal' data-target='#myModal' onclick=\"detalhar('"+(workbook.Sheets.Sheet1['A'+i].v)+"')\">Detalhar</button></td>";
+
+			htmlstr += "<td>";
+			htmlstr += "<div style='display: none' id='detalhe"+(workbook.Sheets.Sheet1['G'+i].v)+"'>";
+			htmlstr += "<table class='table table-striped mt-40'>";
+			htmlstr += "<thead>";
+			htmlstr += "<tr>";
+			htmlstr += "<th>Campo</th>";
+			htmlstr += "<th>De</th>";
+			htmlstr += "<th>Para</th>";
+			htmlstr += "</tr>";
+			htmlstr += "</thead>";
+			htmlstr += "<tbody>";			
+
+			for(var k = 0; k < colunDetalhe.length; k=k+3){
+				if(global_wb.Sheets.Sheet1[colunDetalhe[k]+i] && global_wb.Sheets.Sheet1[colunDetalhe[k+1]+i] && String(global_wb.Sheets.Sheet1[colunDetalhe[k]+i].v).trim() != String(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+i].v).trim()){
+					htmlstr += "<tr style='background: #FFAAAA'>";
+				} else {
+					htmlstr += "<tr>";
+				}
+
+				if(global_wb.Sheets.Sheet1[colunDetalhe[k]+1]){
+					htmlstr += "<td>"+(global_wb.Sheets.Sheet1[colunDetalhe[k]+1].v)+"</td>";
+				} else{
+					htmlstr += "<td></td>";
+				}
+
+				if(global_wb.Sheets.Sheet1[colunDetalhe[k]+i]){
+					htmlstr += "<td>"+(global_wb.Sheets.Sheet1[colunDetalhe[k]+i].v)+"</td>";
+				} else{
+					htmlstr += "<td></td>";
+				}
+
+				if(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+i]){
+					htmlstr += "<td>"+(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+i].v)+"</td>";
+				} else{
+					htmlstr += "<td></td>";
+				}
+
+				htmlstr += "</tr>";
+			}
+			
+			htmlstr += "</tbody>";
+			htmlstr += "</table>";
+			htmlstr += "</div>";
+			htmlstr += "</td>";
+
 			htmlstr += "</tr>"
 		}
 
@@ -48,16 +99,6 @@ var process_wb = (function() {
 	return function process_wb(wb) {
 		global_wb = wb;
 		to_html(wb);
-	};
-})();
-
-var setfmt = window.setfmt = function setfmt() { if(global_wb) process_wb(global_wb); };
-
-var b64it = window.b64it = (function() {
-	var tarea = document.getElementById('b64data');
-	return function b64it() {
-		var wb = X.read(tarea.value, {type:'base64', WTF:false});
-		process_wb(wb);
 	};
 })();
 
@@ -95,43 +136,7 @@ function detalhar(val){
 	HTMLOUT.innerHTML = "";
 
 	var objects = [];
-	var htmlstr = "";
-
-	for (var i in global_wb.Sheets.Sheet1) {
-		if (global_wb.Sheets.Sheet1[i].v == val) {
-			var linha = i.replace(/[^0-9]/g,'');
-			for(var y = 0; y < colunDetalhe.length; y=y+3){
-				if(global_wb.Sheets.Sheet1[colunDetalhe[y]+linha] && global_wb.Sheets.Sheet1[colunDetalhe[y+1]+linha] && String(global_wb.Sheets.Sheet1[colunDetalhe[y]+linha].v).trim() != String(global_wb.Sheets.Sheet1[colunDetalhe[y+1]+linha].v).trim()){
-					htmlstr += "<tr style='background: #FFAAAA'>";
-				} else {
-					htmlstr += "<tr>";
-				}
-
-				if(global_wb.Sheets.Sheet1[colunDetalhe[y]+1]){
-					htmlstr += "<td>"+(global_wb.Sheets.Sheet1[colunDetalhe[y]+1].v)+"</td>";
-				} else{
-					htmlstr += "<td></td>";
-				}
-
-				if(global_wb.Sheets.Sheet1[colunDetalhe[y]+linha]){
-					htmlstr += "<td>"+(global_wb.Sheets.Sheet1[colunDetalhe[y]+linha].v)+"</td>";
-				} else{
-					htmlstr += "<td></td>";
-				}
-
-				if(global_wb.Sheets.Sheet1[colunDetalhe[y+1]+linha]){
-					htmlstr += "<td>"+(global_wb.Sheets.Sheet1[colunDetalhe[y+1]+linha].v)+"</td>";
-				} else{
-					htmlstr += "<td></td>";
-				}
-				
-
-				htmlstr += "</tr>";
-			}
-
-			break;
-		}
-	}
+	var htmlstr = $('#detalhe'+val).html();
 
 	HTMLOUT.innerHTML = htmlstr;
 }
