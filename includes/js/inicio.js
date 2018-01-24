@@ -43,8 +43,7 @@ function to_html() {
 		totalPagina = Number(totalPagina) + 1;
 	}
 
-	var limite = 0;
-	
+	var limite = 0;	
 	if(key.length - 2 >= 31){
 		limite = 31;
 	}else{
