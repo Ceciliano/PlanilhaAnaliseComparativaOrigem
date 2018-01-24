@@ -159,3 +159,7 @@ function detalhar(val){
 
 	HTMLOUT.innerHTML = htmlstr;
 }
+
+$('#myModal').on('hide.bs.modal', function () {
+    $('.modal-body').scrollTop(0);
+});
