@@ -66,7 +66,7 @@ var process_wb = (function() {
 				}
 
 				if(global_wb.Sheets.Sheet1[colunDetalhe[k]+1]){
-					htmlstr += "<td>"+(global_wb.Sheets.Sheet1[colunDetalhe[k]+1].v)+"</td>";
+					htmlstr += "<td>"+(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+1].v)+"</td>";
 				} else{
 					htmlstr += "<td></td>";
 				}
