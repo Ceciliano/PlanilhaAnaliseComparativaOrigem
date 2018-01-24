@@ -21,87 +21,98 @@ var colunDetalhe = ['M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','AA'
 					'EA','EB','EC','ED','EE','EF','EG'];
 
 var process_wb = (function() {
-	var HTMLOUT = document.getElementById('corpo');
-
-	var to_html = function to_html(workbook) {
-		HTMLOUT.innerHTML = "";
-
-		var htmlstr = "";
-
-		for(var i = 2; true; i++){
-			if(!workbook.Sheets.Sheet1['A'+i]){
-				break;
-			}
-
-			htmlstr += "<tr id=A"+i+">"
-			for(var y = 0; y < colunTitulo.length; y++){
-				if(workbook.Sheets.Sheet1[colunTitulo[y]+i]){
-					htmlstr += "<td>"+(workbook.Sheets.Sheet1[colunTitulo[y]+i].v)+"</td>";
-				} else{
-					htmlstr += "<td></td>";
-				}
-			}
-
-			htmlstr += "</td>";
-
-			htmlstr += "<td><button type='submit' class='btn btn-success btn-sm' data-toggle='modal' data-target='#myModal' onclick=\"detalhar('"+(workbook.Sheets.Sheet1['A'+i].v)+"')\">Detalhar</button></td>";
-
-			htmlstr += "<td>";
-			htmlstr += "<div style='display: none' id='detalhe"+(workbook.Sheets.Sheet1['G'+i].v)+"'>";
-			htmlstr += "<table class='table table-striped mt-40'>";
-			htmlstr += "<thead>";
-			htmlstr += "<tr>";
-			htmlstr += "<th>Campo</th>";
-			htmlstr += "<th>De</th>";
-			htmlstr += "<th>Para</th>";
-			htmlstr += "</tr>";
-			htmlstr += "</thead>";
-			htmlstr += "<tbody>";			
-
-			for(var k = 0; k < colunDetalhe.length; k=k+3){
-				if(global_wb.Sheets.Sheet1[colunDetalhe[k]+i] && global_wb.Sheets.Sheet1[colunDetalhe[k+1]+i] && String(global_wb.Sheets.Sheet1[colunDetalhe[k]+i].v).trim() != String(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+i].v).trim()){
-					htmlstr += "<tr style='background: #FFAAAA'>";
-				} else {
-					htmlstr += "<tr>";
-				}
-
-				if(global_wb.Sheets.Sheet1[colunDetalhe[k]+1]){
-					htmlstr += "<td>"+(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+1].v)+"</td>";
-				} else{
-					htmlstr += "<td></td>";
-				}
-
-				if(global_wb.Sheets.Sheet1[colunDetalhe[k]+i]){
-					htmlstr += "<td>"+(global_wb.Sheets.Sheet1[colunDetalhe[k]+i].v)+"</td>";
-				} else{
-					htmlstr += "<td></td>";
-				}
-
-				if(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+i]){
-					htmlstr += "<td>"+(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+i].v)+"</td>";
-				} else{
-					htmlstr += "<td></td>";
-				}
-
-				htmlstr += "</tr>";
-			}
-			
-			htmlstr += "</tbody>";
-			htmlstr += "</table>";
-			htmlstr += "</div>";
-			htmlstr += "</td>";
-
-			htmlstr += "</tr>"
-		}
-
-		HTMLOUT.innerHTML = htmlstr;
-	}
-	
 	return function process_wb(wb) {
 		global_wb = wb;
-		to_html(wb);
+		to_html();
 	};
 })();
+
+function to_html() {
+	var HTMLOUT = document.getElementById('corpo');
+
+	HTMLOUT.innerHTML = "";
+	var htmlstr = "";
+
+	for(var i = 2; true; i++){
+		if(!global_wb.Sheets.Sheet1['A'+i]){
+			break;
+		}
+
+		htmlstr += "<tr id=A"+i+">"
+		for(var y = 0; y < colunTitulo.length; y++){
+			if(global_wb.Sheets.Sheet1[colunTitulo[y]+i]){
+				if(global_wb.Sheets.Sheet1[colunTitulo[y]+i].w){
+					htmlstr += "<td>"+(global_wb.Sheets.Sheet1[colunTitulo[y]+i].w)+"</td>";
+				} else {
+					htmlstr += "<td>"+(global_wb.Sheets.Sheet1[colunTitulo[y]+i].v)+"</td>";
+				}
+			} else{
+				htmlstr += "<td></td>";
+			}
+		}
+
+		htmlstr += "</td>";
+
+		htmlstr += "<td><button type='submit' class='btn btn-success btn-sm' data-toggle='modal' data-target='#myModal' onclick=\"detalhar('"+(global_wb.Sheets.Sheet1['A'+i].v)+"')\">Detalhar</button></td>";
+
+		htmlstr += "<td>";
+		htmlstr += "<div style='display: none' id='detalhe"+(global_wb.Sheets.Sheet1['G'+i].v)+"'>";
+		htmlstr += "<table class='table table-striped mt-40'>";
+		htmlstr += "<thead>";
+		htmlstr += "<tr>";
+		htmlstr += "<th>Campo</th>";
+		htmlstr += "<th>De</th>";
+		htmlstr += "<th>Para</th>";
+		htmlstr += "</tr>";
+		htmlstr += "</thead>";
+		htmlstr += "<tbody>";			
+
+		for(var k = 0; k < colunDetalhe.length; k=k+3){
+			if(global_wb.Sheets.Sheet1[colunDetalhe[k]+i] && global_wb.Sheets.Sheet1[colunDetalhe[k+1]+i] && String(global_wb.Sheets.Sheet1[colunDetalhe[k]+i].v).trim() != String(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+i].v).trim()){
+				htmlstr += "<tr style='background: #FFAAAA'>";
+			} else {
+				htmlstr += "<tr>";
+			}
+
+			if(global_wb.Sheets.Sheet1[colunDetalhe[k]+1]){
+				htmlstr += "<td>"+(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+1].v)+"</td>";
+			} else{
+				htmlstr += "<td></td>";
+			}
+
+			if(global_wb.Sheets.Sheet1[colunDetalhe[k]+i]){
+				if((global_wb.Sheets.Sheet1[colunDetalhe[k]+i].w)){
+					htmlstr += "<td>"+(global_wb.Sheets.Sheet1[colunDetalhe[k]+i].w)+"</td>";
+				} else {
+					htmlstr += "<td>"+(global_wb.Sheets.Sheet1[colunDetalhe[k]+i].v)+"</td>";
+				}
+			} else{
+				htmlstr += "<td></td>";
+			}
+
+			if(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+i]){
+				if(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+i].w){
+					htmlstr += "<td>"+(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+i].w)+"</td>";
+				} else {
+					htmlstr += "<td>"+(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+i].v)+"</td>";
+				}
+			} else{
+				htmlstr += "<td></td>";
+			}
+
+			htmlstr += "</tr>";
+		}
+		
+		htmlstr += "</tbody>";
+		htmlstr += "</table>";
+		htmlstr += "</div>";
+		htmlstr += "</td>";
+
+		htmlstr += "</tr>"
+	}
+	
+	HTMLOUT.innerHTML = htmlstr;
+}
 
 function do_file(files) {
 	var f = files[0];
@@ -121,16 +132,92 @@ function buscar() {
 	});
 
 	if(key){
-		$('#corpo > tr').hide();
-		$("#"+key).show();
+		var HTMLOUT = document.getElementById('corpo');
+		HTMLOUT.innerHTML = "";
+		var i = key.replace(/[^\d]+/g,'');
+		var htmlstr = "";
+		
+		htmlstr += "<tr id=A"+i+">"
+		for(var y = 0; y < colunTitulo.length; y++){
+			if(global_wb.Sheets.Sheet1[colunTitulo[y]+i]){
+				if(global_wb.Sheets.Sheet1[colunTitulo[y]+i].w){
+					htmlstr += "<td>"+(global_wb.Sheets.Sheet1[colunTitulo[y]+i].w)+"</td>";
+				} else {
+					htmlstr += "<td>"+(global_wb.Sheets.Sheet1[colunTitulo[y]+i].v)+"</td>";
+				}
+			} else{
+				htmlstr += "<td></td>";
+			}
+		}
+
+		htmlstr += "</td>";
+
+		htmlstr += "<td><button type='submit' class='btn btn-success btn-sm' data-toggle='modal' data-target='#myModal' onclick=\"detalhar('"+(global_wb.Sheets.Sheet1['A'+i].v)+"')\">Detalhar</button></td>";
+
+		htmlstr += "<td>";
+		htmlstr += "<div style='display: none' id='detalhe"+(global_wb.Sheets.Sheet1['G'+i].v)+"'>";
+		htmlstr += "<table class='table table-striped mt-40'>";
+		htmlstr += "<thead>";
+		htmlstr += "<tr>";
+		htmlstr += "<th>Campo</th>";
+		htmlstr += "<th>De</th>";
+		htmlstr += "<th>Para</th>";
+		htmlstr += "</tr>";
+		htmlstr += "</thead>";
+		htmlstr += "<tbody>";			
+
+		for(var k = 0; k < colunDetalhe.length; k=k+3){
+			if(global_wb.Sheets.Sheet1[colunDetalhe[k]+i] && global_wb.Sheets.Sheet1[colunDetalhe[k+1]+i] && String(global_wb.Sheets.Sheet1[colunDetalhe[k]+i].v).trim() != String(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+i].v).trim()){
+				htmlstr += "<tr style='background: #FFAAAA'>";
+			} else {
+				htmlstr += "<tr>";
+			}
+
+			if(global_wb.Sheets.Sheet1[colunDetalhe[k]+1]){
+				htmlstr += "<td>"+(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+1].v)+"</td>";
+			} else{
+				htmlstr += "<td></td>";
+			}
+
+			if(global_wb.Sheets.Sheet1[colunDetalhe[k]+i]){
+				if((global_wb.Sheets.Sheet1[colunDetalhe[k]+i].w)){
+					htmlstr += "<td>"+(global_wb.Sheets.Sheet1[colunDetalhe[k]+i].w)+"</td>";
+				} else {
+					htmlstr += "<td>"+(global_wb.Sheets.Sheet1[colunDetalhe[k]+i].v)+"</td>";
+				}
+			} else{
+				htmlstr += "<td></td>";
+			}
+
+			if(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+i]){
+				if(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+i].w){
+					htmlstr += "<td>"+(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+i].w)+"</td>";
+				} else {
+					htmlstr += "<td>"+(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+i].v)+"</td>";
+				}
+			} else{
+				htmlstr += "<td></td>";
+			}
+
+			htmlstr += "</tr>";
+		}
+		
+		htmlstr += "</tbody>";
+		htmlstr += "</table>";
+		htmlstr += "</div>";
+		htmlstr += "</td>";
+
+		htmlstr += "</tr>"
+		
+		HTMLOUT.innerHTML = htmlstr;
 	} else {
-		$('#corpo > tr').show();
+		to_html();
 	}
 };
 
 function limpar() {
-	$('#corpo > tr').show();
 	$('#ZZGUID').val("");
+	to_html();
 };
 
 (function() {
