@@ -279,11 +279,14 @@ img {
 	background:white;
 }
 
+#paginacao > nav > ul > li > div {
+	cursor: pointer;
+}
+
 #paginacao > nav > ul > li.page-item.action > div{
 	background:gray;
 	color: black;
 }
-
 
 /* Center the loader */
 #loader {

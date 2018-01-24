@@ -30,6 +30,31 @@ var process_wb = (function() {
 })();
 
 function to_html() {
+	var HTMLOUT = document.getElementById('corpo');
+
+	HTMLOUT.innerHTML = "";
+	var htmlstr = "";
+
+	var key = JSON.stringify(global_wb.Sheets.Sheet1).match(/\"([A]{1})\d+/g,'');
+	var restoDivisao = (key.length - 2) % 30;
+	totalPagina = parseInt(Number((key.length - 2) / 30));
+
+	if(restoDivisao > 0 && totalPagina > 0){
+		totalPagina = Number(totalPagina) + 1;
+	}
+
+	var limite = 0;	
+	if(key.length - 2 >= 31){
+		limite = (30 * pagina)+2;
+	}else{
+		limite = key.length;
+	}
+
+	var inic = limite - 30; 
+
+	for(var i = inic; i <= limite; i++){
+		if(!global_wb.Sheets.Sheet1['A'+i]){
+			break;
 	
 	try{
 		var HTMLOUT = document.getElementById('corpo');
@@ -154,9 +179,42 @@ function to_html() {
 	}
 
 	loader(false);
+
+	if(totalPagina > 1){
+		var htmlPag = "<nav aria-label='Page navigation'>";
+		htmlPag += "<ul class='pagination'>";
+	
+		for(var i=1;i<=totalPagina;i++){
+			if(i == pagina){
+				htmlPag += "<li class='page-item action'><div class='page-link'>"+i+"</div></li>";
+			}else{
+				htmlPag += "<li class='page-item'><div class='page-link' onclick=\"paginar("+i+")\">"+i+"</div></li>";
+			}
+		}
+	
+		htmlPag += "</ul>";
+		htmlPag += "</nav>";
+	
+		$('#paginacao').html(htmlPag);
+	} else{
+		var htmlPag = "<nav aria-label='Page navigation'>";
+		htmlPag += "<ul class='pagination'>";
+	
+		htmlPag += "</ul>";
+		htmlPag += "</nav>";
+	
+		$('#paginacao').html(htmlPag);
+	}
 }
 
+function paginar(pag) {
+	pagina = pag;	
+	to_html();
+};
+
 function do_file(files) {
+	pagina = 1;
+	totalPagina = 0;
 	
 	loader(true);
 	
@@ -168,6 +226,7 @@ function do_file(files) {
 		process_wb(X.read(data, {type: 'array'}));
 	};
 	
+	reader.readAsArrayBuffer(f);
 	try{
 		reader.readAsArrayBuffer(f);
 	}catch(err){
@@ -280,6 +339,24 @@ function buscar() {
 			show('alert2', true);
 		}
 		
+		htmlstr += "</tbody>";
+		htmlstr += "</table>";
+		htmlstr += "</div>";
+		htmlstr += "</td>";
+
+		htmlstr += "</tr>"
+		
+		HTMLOUT.innerHTML = htmlstr;
+
+		var htmlPag = "<nav aria-label='Page navigation'>";
+		htmlPag += "<ul class='pagination'>";
+	
+		htmlPag += "</ul>";
+		htmlPag += "</nav>";
+	
+		$('#paginacao').html(htmlPag);
+	} else {
+		to_html();
 	}else{
 		document.getElementById('ZZGUID').style.borderColor = "red";
 		show('alert', true);
