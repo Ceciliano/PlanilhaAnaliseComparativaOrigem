@@ -76,7 +76,7 @@ function do_file(files) {
 (function() {
 	var xlf = document.getElementById('xlf');
 	if(!xlf.addEventListener) return;
-	function handleFile(e) { do_file(e.target.files); }
+	function handleFile(e) {do_file(e.target.files);}
 	xlf.addEventListener('change', handleFile, false);
 })();
 	var _gaq = _gaq || [];
@@ -89,6 +89,7 @@ function do_file(files) {
 	})();
 
 function detalhar(val){
+	$('.tituloModal').html('Origem X Destino -' + val);
 
 	var mySecondTitle=$.parseHTML(val);
 	$('#tituloModal').append(' - ').append(mySecondTitle);
