@@ -10,6 +10,7 @@ var XW = {
 	/* worker scripts */
 	worker: './xlsxworker.js'
 };
+
 var global_wb;
 var colunTitulo = ['G','H','I','J','K','L'];
 var colunDetalhe = ['M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','AA','AB','AC','AD','AE','AF','AG','AH','AI','AJ',
@@ -32,7 +33,7 @@ var process_wb = (function() {
 				break;
 			}
 
-			htmlstr += "<tr>"
+			htmlstr += "<tr id=A"+i+">"
 			for(var y = 0; y < colunTitulo.length; y++){
 				if(workbook.Sheets.Sheet1[colunTitulo[y]+i]){
 					htmlstr += "<td>"+(workbook.Sheets.Sheet1[colunTitulo[y]+i].v)+"</td>";
@@ -108,10 +109,28 @@ function do_file(files) {
 
 	reader.onload = function(e) {
 		var data = e.target.result;
-		process_wb(X.read(data, {type: false ? 'binary' : 'array'}));
+		process_wb(X.read(data, {type: 'array'}));
 	};
 
 	reader.readAsArrayBuffer(f);
+};
+
+function buscar() {
+	var key = _.findKey(global_wb.Sheets.Sheet1, {
+		v: $('#ZZGUID').val()
+	});
+
+	if(key){
+		$('#corpo > tr').hide();
+		$("#"+key).show();
+	} else {
+		$('#corpo > tr').show();
+	}
+};
+
+function limpar() {
+	$('#corpo > tr').show();
+	$('#ZZGUID').val("");
 };
 
 (function() {
