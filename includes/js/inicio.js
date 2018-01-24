@@ -168,8 +168,10 @@ function to_html() {
 }
 
 function paginar(pag) {
+	loader(true);
 	pagina = pag;	
 	to_html();
+	loader(false);
 };
 
 function do_file(files) {
