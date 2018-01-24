@@ -129,9 +129,13 @@ function to_html() {
 	}
 	
 	HTMLOUT.innerHTML = htmlstr;
+	loader(false);
 }
 
 function do_file(files) {
+	
+	loader(true);
+	
 	var f = files[0];
 	var reader = new FileReader();
 
@@ -139,11 +143,16 @@ function do_file(files) {
 		var data = e.target.result;
 		process_wb(X.read(data, {type: 'array'}));
 	};
-
+	
 	reader.readAsArrayBuffer(f);
+	
+	
 };
 
 function buscar() {
+	
+	loader(true);
+	
 	var key = _.findKey(global_wb.Sheets.Sheet1, {
 		v: $('#ZZGUID').val()
 	});
@@ -230,11 +239,14 @@ function buscar() {
 	} else {
 		to_html();
 	}
+	loader(false);
 };
 
 function limpar() {
+	loader(true);
 	$('#ZZGUID').val("");
 	to_html();
+	loader(false);
 };
 
 (function() {
@@ -267,3 +279,23 @@ function detalhar(val){
 $('#myModal').on('hide.bs.modal', function () {
     $('.modal-body').scrollTop(0);
 });
+
+
+function show(id, value) {
+    document.getElementById(id).style.display = value ? 'block' : 'none';
+}
+
+function opacity(id, value){
+	document.getElementById(id).style.opacity = value ? 1 : 0.5;
+}
+
+
+function loader(value){
+	if(value){
+		opacity('myDiv', false);
+		show('loader', true);
+	}else{
+		show('loader', false);
+		opacity('myDiv', true);
+	}
+}
