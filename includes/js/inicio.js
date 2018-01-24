@@ -130,6 +130,24 @@ function to_html() {
 	
 	HTMLOUT.innerHTML = htmlstr;
 	loader(false);
+
+	if(totalPagina > 1){
+		var htmlPag = "<nav aria-label='Page navigation'>";
+		htmlPag += "<ul class='pagination'>";
+	
+		for(var i=1;i<=totalPagina;i++){
+			if(i == pagina){
+				htmlPag += "<li class='page-item action'><div class='page-link'>"+i+"</div></li>";
+			}else{
+				htmlPag += "<li class='page-item'><a class='page-link' href='#'>"+i+"</a></li>";
+			}
+		}
+	
+		htmlPag += "</ul>";
+		htmlPag += "</nav>";
+	
+		$('#paginacao').html(htmlPag);
+	}
 }
 
 function do_file(files) {
