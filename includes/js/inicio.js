@@ -30,124 +30,130 @@ var process_wb = (function() {
 })();
 
 function to_html() {
-	var HTMLOUT = document.getElementById('corpo');
-
-	HTMLOUT.innerHTML = "";
-	var htmlstr = "";
-
-	var key = JSON.stringify(global_wb.Sheets.Sheet1).match(/\"([A]{1})\d+/g,'');
-	var restoDivisao = (key.length - 2) % 30;
-	totalPagina = Number((key.length - 2) / 30).toFixed(0);
-
-	if(restoDivisao > 0){
-		totalPagina = Number(totalPagina) + 1;
-	}
-
-	var limite = 0;	
-	if(key.length - 2 >= 31){
-		limite = 31;
-	}else{
-		limite = key.length;
-	}
-
-	for(var i = 2; i <= limite; i++){
-		if(!global_wb.Sheets.Sheet1['A'+i]){
-			break;
-		}
-
-		htmlstr += "<tr id=A"+i+">"
-		for(var y = 0; y < colunTitulo.length; y++){
-			if(global_wb.Sheets.Sheet1[colunTitulo[y]+i]){
-				if(global_wb.Sheets.Sheet1[colunTitulo[y]+i].w){
-					htmlstr += "<td>"+(global_wb.Sheets.Sheet1[colunTitulo[y]+i].w)+"</td>";
-				} else {
-					htmlstr += "<td>"+(global_wb.Sheets.Sheet1[colunTitulo[y]+i].v)+"</td>";
-				}
-			} else{
-				htmlstr += "<td></td>";
-			}
-		}
-
-		htmlstr += "</td>";
-
-		htmlstr += "<td><button type='submit' class='btn btn-success btn-sm' data-toggle='modal' data-target='#myModal' onclick=\"detalhar('"+(global_wb.Sheets.Sheet1['A'+i].v)+"')\">Detalhar</button></td>";
-
-		htmlstr += "<td>";
-		htmlstr += "<div style='display: none' id='detalhe"+(global_wb.Sheets.Sheet1['G'+i].v)+"'>";
-		htmlstr += "<table class='table table-striped mt-40'>";
-		htmlstr += "<thead>";
-		htmlstr += "<tr>";
-		htmlstr += "<th>Campo</th>";
-		htmlstr += "<th>De</th>";
-		htmlstr += "<th>Para</th>";
-		htmlstr += "</tr>";
-		htmlstr += "</thead>";
-		htmlstr += "<tbody>";			
-
-		for(var k = 0; k < colunDetalhe.length; k=k+3){
-			if(global_wb.Sheets.Sheet1[colunDetalhe[k]+i] && global_wb.Sheets.Sheet1[colunDetalhe[k+1]+i] && String(global_wb.Sheets.Sheet1[colunDetalhe[k]+i].v).trim() != String(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+i].v).trim()){
-				htmlstr += "<tr style='background: #FFAAAA'>";
-			} else {
-				htmlstr += "<tr>";
-			}
-
-			if(global_wb.Sheets.Sheet1[colunDetalhe[k]+1]){
-				htmlstr += "<td>"+(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+1].v)+"</td>";
-			} else{
-				htmlstr += "<td></td>";
-			}
-
-			if(global_wb.Sheets.Sheet1[colunDetalhe[k]+i]){
-				if((global_wb.Sheets.Sheet1[colunDetalhe[k]+i].w)){
-					htmlstr += "<td>"+(global_wb.Sheets.Sheet1[colunDetalhe[k]+i].w)+"</td>";
-				} else {
-					htmlstr += "<td>"+(global_wb.Sheets.Sheet1[colunDetalhe[k]+i].v)+"</td>";
-				}
-			} else{
-				htmlstr += "<td></td>";
-			}
-
-			if(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+i]){
-				if(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+i].w){
-					htmlstr += "<td>"+(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+i].w)+"</td>";
-				} else {
-					htmlstr += "<td>"+(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+i].v)+"</td>";
-				}
-			} else{
-				htmlstr += "<td></td>";
-			}
-
-			htmlstr += "</tr>";
+	
+	try{
+		var HTMLOUT = document.getElementById('corpo');
+		
+		HTMLOUT.innerHTML = "";
+		var htmlstr = "";
+		
+		var key = JSON.stringify(global_wb.Sheets.Sheet1).match(/\"([A]{1})\d+/g,'');
+		var restoDivisao = (key.length - 2) % 30;
+		totalPagina = Number((key.length - 2) / 30).toFixed(0);
+		
+		if(restoDivisao > 0){
+			totalPagina = Number(totalPagina) + 1;
 		}
 		
-		htmlstr += "</tbody>";
-		htmlstr += "</table>";
-		htmlstr += "</div>";
-		htmlstr += "</td>";
-
-		htmlstr += "</tr>"
-	}
-	
-	HTMLOUT.innerHTML = htmlstr;
-	loader(false);
-
-	if(totalPagina > 1){
-		var htmlPag = "<nav aria-label='Page navigation'>";
-		htmlPag += "<ul class='pagination'>";
-	
-		for(var i=1;i<=totalPagina;i++){
-			if(i == pagina){
-				htmlPag += "<li class='page-item action'><div class='page-link'>"+i+"</div></li>";
-			}else{
-				htmlPag += "<li class='page-item'><a class='page-link' href='#'>"+i+"</a></li>";
-			}
+		var limite = 0;	
+		if(key.length - 2 >= 31){
+			limite = 31;
+		}else{
+			limite = key.length;
 		}
-	
-		htmlPag += "</ul>";
-		htmlPag += "</nav>";
-	
-		$('#paginacao').html(htmlPag);
+		
+		for(var i = 2; i <= limite; i++){
+			if(!global_wb.Sheets.Sheet1['A'+i]){
+				break;
+			}
+			
+			htmlstr += "<tr id=A"+i+">"
+			for(var y = 0; y < colunTitulo.length; y++){
+				if(global_wb.Sheets.Sheet1[colunTitulo[y]+i]){
+					if(global_wb.Sheets.Sheet1[colunTitulo[y]+i].w){
+						htmlstr += "<td>"+(global_wb.Sheets.Sheet1[colunTitulo[y]+i].w)+"</td>";
+					} else {
+						htmlstr += "<td>"+(global_wb.Sheets.Sheet1[colunTitulo[y]+i].v)+"</td>";
+					}
+				} else{
+					htmlstr += "<td></td>";
+				}
+			}
+			
+			htmlstr += "</td>";
+			
+			htmlstr += "<td><button type='submit' class='btn btn-success btn-sm' data-toggle='modal' data-target='#myModal' onclick=\"detalhar('"+(global_wb.Sheets.Sheet1['A'+i].v)+"')\">Detalhar</button></td>";
+			
+			htmlstr += "<td>";
+			htmlstr += "<div style='display: none' id='detalhe"+(global_wb.Sheets.Sheet1['G'+i].v)+"'>";
+			htmlstr += "<table class='table table-striped mt-40'>";
+			htmlstr += "<thead>";
+			htmlstr += "<tr>";
+			htmlstr += "<th>Campo</th>";
+			htmlstr += "<th>De</th>";
+			htmlstr += "<th>Para</th>";
+			htmlstr += "</tr>";
+			htmlstr += "</thead>";
+			htmlstr += "<tbody>";			
+			
+			for(var k = 0; k < colunDetalhe.length; k=k+3){
+				if(global_wb.Sheets.Sheet1[colunDetalhe[k]+i] && global_wb.Sheets.Sheet1[colunDetalhe[k+1]+i] && String(global_wb.Sheets.Sheet1[colunDetalhe[k]+i].v).trim() != String(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+i].v).trim()){
+					htmlstr += "<tr style='background: #FFAAAA'>";
+				} else {
+					htmlstr += "<tr>";
+				}
+				
+				if(global_wb.Sheets.Sheet1[colunDetalhe[k]+1]){
+					htmlstr += "<td>"+(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+1].v)+"</td>";
+				} else{
+					htmlstr += "<td></td>";
+				}
+				
+				if(global_wb.Sheets.Sheet1[colunDetalhe[k]+i]){
+					if((global_wb.Sheets.Sheet1[colunDetalhe[k]+i].w)){
+						htmlstr += "<td>"+(global_wb.Sheets.Sheet1[colunDetalhe[k]+i].w)+"</td>";
+					} else {
+						htmlstr += "<td>"+(global_wb.Sheets.Sheet1[colunDetalhe[k]+i].v)+"</td>";
+					}
+				} else{
+					htmlstr += "<td></td>";
+				}
+				
+				if(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+i]){
+					if(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+i].w){
+						htmlstr += "<td>"+(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+i].w)+"</td>";
+					} else {
+						htmlstr += "<td>"+(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+i].v)+"</td>";
+					}
+				} else{
+					htmlstr += "<td></td>";
+				}
+				
+				htmlstr += "</tr>";
+			}
+			
+			htmlstr += "</tbody>";
+			htmlstr += "</table>";
+			htmlstr += "</div>";
+			htmlstr += "</td>";
+			
+			htmlstr += "</tr>"
+		}
+		
+		HTMLOUT.innerHTML = htmlstr;
+		
+		if(totalPagina > 1){
+			var htmlPag = "<nav aria-label='Page navigation'>";
+			htmlPag += "<ul class='pagination'>";
+			
+			for(var i=1;i<=totalPagina;i++){
+				if(i == pagina){
+					htmlPag += "<li class='page-item action'><div class='page-link'>"+i+"</div></li>";
+				}else{
+					htmlPag += "<li class='page-item'><a class='page-link' href='#'>"+i+"</a></li>";
+				}
+			}
+			
+			htmlPag += "</ul>";
+			htmlPag += "</nav>";
+			
+			$('#paginacao').html(htmlPag);
+		}
+	}catch(err){
+		
 	}
+
+	loader(false);
 }
 
 function do_file(files) {
@@ -162,109 +168,129 @@ function do_file(files) {
 		process_wb(X.read(data, {type: 'array'}));
 	};
 	
-	reader.readAsArrayBuffer(f);
+	try{
+		reader.readAsArrayBuffer(f);
+	}catch(err){
+		loader(false);
+	}
 	
 	
 };
 
 function buscar() {
-	
-	loader(true);
-	
-	var key = _.findKey(global_wb.Sheets.Sheet1, {
-		v: $('#ZZGUID').val()
-	});
-
-	if(key){
-		var HTMLOUT = document.getElementById('corpo');
-		HTMLOUT.innerHTML = "";
-		var i = key.replace(/[^\d]+/g,'');
-		var htmlstr = "";
+	if($('#ZZGUID').val() != ''){
+		document.getElementById('ZZGUID').style.borderColor = "";
+		show('alert', false);
+		show('alert2', false);
+		loader(true);
 		
-		htmlstr += "<tr id=A"+i+">"
-		for(var y = 0; y < colunTitulo.length; y++){
-			if(global_wb.Sheets.Sheet1[colunTitulo[y]+i]){
-				if(global_wb.Sheets.Sheet1[colunTitulo[y]+i].w){
-					htmlstr += "<td>"+(global_wb.Sheets.Sheet1[colunTitulo[y]+i].w)+"</td>";
-				} else {
-					htmlstr += "<td>"+(global_wb.Sheets.Sheet1[colunTitulo[y]+i].v)+"</td>";
+		try{
+			var key = _.findKey(global_wb.Sheets.Sheet1, {
+				v: $('#ZZGUID').val()
+			});
+			
+			if(key){
+				var HTMLOUT = document.getElementById('corpo');
+				HTMLOUT.innerHTML = "";
+				var i = key.replace(/[^\d]+/g,'');
+				var htmlstr = "";
+				
+				htmlstr += "<tr id=A"+i+">"
+				for(var y = 0; y < colunTitulo.length; y++){
+					if(global_wb.Sheets.Sheet1[colunTitulo[y]+i]){
+						if(global_wb.Sheets.Sheet1[colunTitulo[y]+i].w){
+							htmlstr += "<td>"+(global_wb.Sheets.Sheet1[colunTitulo[y]+i].w)+"</td>";
+						} else {
+							htmlstr += "<td>"+(global_wb.Sheets.Sheet1[colunTitulo[y]+i].v)+"</td>";
+						}
+					} else{
+						htmlstr += "<td></td>";
+					}
 				}
-			} else{
-				htmlstr += "<td></td>";
-			}
-		}
-
-		htmlstr += "</td>";
-
-		htmlstr += "<td><button type='submit' class='btn btn-success btn-sm' data-toggle='modal' data-target='#myModal' onclick=\"detalhar('"+(global_wb.Sheets.Sheet1['A'+i].v)+"')\">Detalhar</button></td>";
-
-		htmlstr += "<td>";
-		htmlstr += "<div style='display: none' id='detalhe"+(global_wb.Sheets.Sheet1['G'+i].v)+"'>";
-		htmlstr += "<table class='table table-striped mt-40'>";
-		htmlstr += "<thead>";
-		htmlstr += "<tr>";
-		htmlstr += "<th>Campo</th>";
-		htmlstr += "<th>De</th>";
-		htmlstr += "<th>Para</th>";
-		htmlstr += "</tr>";
-		htmlstr += "</thead>";
-		htmlstr += "<tbody>";			
-
-		for(var k = 0; k < colunDetalhe.length; k=k+3){
-			if(global_wb.Sheets.Sheet1[colunDetalhe[k]+i] && global_wb.Sheets.Sheet1[colunDetalhe[k+1]+i] && String(global_wb.Sheets.Sheet1[colunDetalhe[k]+i].v).trim() != String(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+i].v).trim()){
-				htmlstr += "<tr style='background: #FFAAAA'>";
-			} else {
+				
+				htmlstr += "</td>";
+				
+				htmlstr += "<td><button type='submit' class='btn btn-success btn-sm' data-toggle='modal' data-target='#myModal' onclick=\"detalhar('"+(global_wb.Sheets.Sheet1['A'+i].v)+"')\">Detalhar</button></td>";
+				
+				htmlstr += "<td>";
+				htmlstr += "<div style='display: none' id='detalhe"+(global_wb.Sheets.Sheet1['G'+i].v)+"'>";
+				htmlstr += "<table class='table table-striped mt-40'>";
+				htmlstr += "<thead>";
 				htmlstr += "<tr>";
-			}
-
-			if(global_wb.Sheets.Sheet1[colunDetalhe[k]+1]){
-				htmlstr += "<td>"+(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+1].v)+"</td>";
-			} else{
-				htmlstr += "<td></td>";
-			}
-
-			if(global_wb.Sheets.Sheet1[colunDetalhe[k]+i]){
-				if((global_wb.Sheets.Sheet1[colunDetalhe[k]+i].w)){
-					htmlstr += "<td>"+(global_wb.Sheets.Sheet1[colunDetalhe[k]+i].w)+"</td>";
-				} else {
-					htmlstr += "<td>"+(global_wb.Sheets.Sheet1[colunDetalhe[k]+i].v)+"</td>";
+				htmlstr += "<th>Campo</th>";
+				htmlstr += "<th>De</th>";
+				htmlstr += "<th>Para</th>";
+				htmlstr += "</tr>";
+				htmlstr += "</thead>";
+				htmlstr += "<tbody>";			
+				
+				for(var k = 0; k < colunDetalhe.length; k=k+3){
+					if(global_wb.Sheets.Sheet1[colunDetalhe[k]+i] && global_wb.Sheets.Sheet1[colunDetalhe[k+1]+i] && String(global_wb.Sheets.Sheet1[colunDetalhe[k]+i].v).trim() != String(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+i].v).trim()){
+						htmlstr += "<tr style='background: #FFAAAA'>";
+					} else {
+						htmlstr += "<tr>";
+					}
+					
+					if(global_wb.Sheets.Sheet1[colunDetalhe[k]+1]){
+						htmlstr += "<td>"+(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+1].v)+"</td>";
+					} else{
+						htmlstr += "<td></td>";
+					}
+					
+					if(global_wb.Sheets.Sheet1[colunDetalhe[k]+i]){
+						if((global_wb.Sheets.Sheet1[colunDetalhe[k]+i].w)){
+							htmlstr += "<td>"+(global_wb.Sheets.Sheet1[colunDetalhe[k]+i].w)+"</td>";
+						} else {
+							htmlstr += "<td>"+(global_wb.Sheets.Sheet1[colunDetalhe[k]+i].v)+"</td>";
+						}
+					} else{
+						htmlstr += "<td></td>";
+					}
+					
+					if(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+i]){
+						if(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+i].w){
+							htmlstr += "<td>"+(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+i].w)+"</td>";
+						} else {
+							htmlstr += "<td>"+(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+i].v)+"</td>";
+						}
+					} else{
+						htmlstr += "<td></td>";
+					}
+					
+					htmlstr += "</tr>";
 				}
-			} else{
-				htmlstr += "<td></td>";
+				
+				htmlstr += "</tbody>";
+				htmlstr += "</table>";
+				htmlstr += "</div>";
+				htmlstr += "</td>";
+				
+				htmlstr += "</tr>"
+					
+					HTMLOUT.innerHTML = htmlstr;
+				loader(false);
+			} else {
+				to_html();
+				show('alert2', true);
 			}
-
-			if(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+i]){
-				if(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+i].w){
-					htmlstr += "<td>"+(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+i].w)+"</td>";
-				} else {
-					htmlstr += "<td>"+(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+i].v)+"</td>";
-				}
-			} else{
-				htmlstr += "<td></td>";
-			}
-
-			htmlstr += "</tr>";
+		}catch(err){
+			loader(false);
+			document.getElementById('ZZGUID').style.borderColor = "red";
+			show('alert', false);
+			show('alert2', true);
 		}
 		
-		htmlstr += "</tbody>";
-		htmlstr += "</table>";
-		htmlstr += "</div>";
-		htmlstr += "</td>";
-
-		htmlstr += "</tr>"
-		
-		HTMLOUT.innerHTML = htmlstr;
-	} else {
-		to_html();
+	}else{
+		document.getElementById('ZZGUID').style.borderColor = "red";
+		show('alert', true);
+		show('alert2', false);
 	}
-	loader(false);
 };
 
 function limpar() {
 	loader(true);
 	$('#ZZGUID').val("");
 	to_html();
-	loader(false);
 };
 
 (function() {
