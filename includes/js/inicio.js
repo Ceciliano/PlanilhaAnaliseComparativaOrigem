@@ -12,6 +12,8 @@ var XW = {
 };
 
 var global_wb;
+var pagina = 1;
+var totalPagina = 0;
 var colunTitulo = ['G','H','I','J','K','L'];
 var colunDetalhe = ['M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','AA','AB','AC','AD','AE','AF','AG','AH','AI','AJ',
 					'AK','AL','AM','AN','AO','AP','AQ','AR','AS','AT','AU','AV','AW','AX','AY','AZ',
@@ -33,7 +35,23 @@ function to_html() {
 	HTMLOUT.innerHTML = "";
 	var htmlstr = "";
 
-	for(var i = 2; true; i++){
+	var key = JSON.stringify(global_wb.Sheets.Sheet1).match(/\"([A]{1})\d+/g,'');
+	var restoDivisao = (key.length - 2) % 30;
+	totalPagina = Number((key.length - 2) / 30).toFixed(0);
+
+	if(restoDivisao > 0){
+		totalPagina = Number(totalPagina) + 1;
+	}
+
+	var limite = 0;
+	
+	if(key.length - 2 >= 31){
+		limite = 31;
+	}else{
+		limite = key.length;
+	}
+
+	for(var i = 2; i <= limite; i++){
 		if(!global_wb.Sheets.Sheet1['A'+i]){
 			break;
 		}
