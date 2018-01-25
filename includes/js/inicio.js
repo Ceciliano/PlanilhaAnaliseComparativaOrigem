@@ -184,11 +184,16 @@ function limparErro(){
 function paginar(pag) {
 	loader(true); 
 	limparErro();
-	$( "li" ).removeClass( "action" );
-	$( "#pag"+pag ).addClass( "action" );
-	pagina = pag;	
-	to_html(true);
-	loader(false); 
+	setTimeout(() => {
+		$( "li" ).removeClass( "action" );
+		$( "#pag"+pag ).addClass( "action" );
+		pagina = pag;
+		
+		to_html();
+		
+		loader(false)
+	}, 500);
+
 };
 
 function do_file(files) {
@@ -226,118 +231,123 @@ function buscar() {
 		return;
 	}
 
-	try{ 
-		var key = _.findKey(global_wb.Sheets.Sheet1, {
-			v: $('#ZZGUID').val()
-		});
+	setTimeout(() => {
+		try{ 
+			var key = _.findKey(global_wb.Sheets.Sheet1, {
+				v: $('#ZZGUID').val()
+			});
 
-		if(key){
-			var HTMLOUT = document.getElementById('corpo');
-			HTMLOUT.innerHTML = "";
-			var i = key.replace(/[^\d]+/g,'');
-			var htmlstr = "";
+			if(key){
+				var HTMLOUT = document.getElementById('corpo');
+				HTMLOUT.innerHTML = "";
+				var i = key.replace(/[^\d]+/g,'');
+				var htmlstr = "";
 
-			
-			htmlstr += "<tr id=A"+i+">"
-			for(var y = 0; y < colunTitulo.length; y++){
-				if(global_wb.Sheets.Sheet1[colunTitulo[y]+i]){
-					if(global_wb.Sheets.Sheet1[colunTitulo[y]+i].w){
-						htmlstr += "<td>"+(global_wb.Sheets.Sheet1[colunTitulo[y]+i].w)+"</td>";
-					} else {
-						htmlstr += "<td>"+(global_wb.Sheets.Sheet1[colunTitulo[y]+i].v)+"</td>";
+				
+				htmlstr += "<tr id=A"+i+">"
+				for(var y = 0; y < colunTitulo.length; y++){
+					if(global_wb.Sheets.Sheet1[colunTitulo[y]+i]){
+						if(global_wb.Sheets.Sheet1[colunTitulo[y]+i].w){
+							htmlstr += "<td>"+(global_wb.Sheets.Sheet1[colunTitulo[y]+i].w)+"</td>";
+						} else {
+							htmlstr += "<td>"+(global_wb.Sheets.Sheet1[colunTitulo[y]+i].v)+"</td>";
+						}
+					} else{
+						htmlstr += "<td></td>";
 					}
-				} else{
-					htmlstr += "<td></td>";
-				}
-			}
-
-			htmlstr += "</td>";
-
-			htmlstr += "<td><button type='submit' class='btn btn-success btn-sm' data-toggle='modal' data-target='#myModal' onclick=\"detalhar('"+(global_wb.Sheets.Sheet1['A'+i].v)+"')\">Detalhar</button></td>";
-
-			htmlstr += "<td>";
-			htmlstr += "<div style='display: none' id='detalhe"+(global_wb.Sheets.Sheet1['G'+i].v)+"'>";
-			htmlstr += "<table class='table table-striped mt-40'>";
-			htmlstr += "<thead>";
-			htmlstr += "<tr>";
-			htmlstr += "<th>Campo</th>";
-			htmlstr += "<th>De</th>";
-			htmlstr += "<th>Para</th>";
-			htmlstr += "</tr>";
-			htmlstr += "</thead>";
-			htmlstr += "<tbody>";			
-
-			for(var k = 0; k < colunDetalhe.length; k=k+3){
-				if(global_wb.Sheets.Sheet1[colunDetalhe[k]+i] && global_wb.Sheets.Sheet1[colunDetalhe[k+1]+i] && String(global_wb.Sheets.Sheet1[colunDetalhe[k]+i].v).trim() != String(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+i].v).trim()){
-					htmlstr += "<tr style='background: #FFAAAA'>";
-				} else {
-					htmlstr += "<tr>";
 				}
 
-				if(global_wb.Sheets.Sheet1[colunDetalhe[k]+1]){
-					htmlstr += "<td>"+(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+1].v)+"</td>";
-				} else{
-					htmlstr += "<td></td>";
-				}
+				htmlstr += "</td>";
 
-				if(global_wb.Sheets.Sheet1[colunDetalhe[k]+i]){
-					if((global_wb.Sheets.Sheet1[colunDetalhe[k]+i].w)){
-						htmlstr += "<td>"+(global_wb.Sheets.Sheet1[colunDetalhe[k]+i].w)+"</td>";
-					} else {
-						htmlstr += "<td>"+(global_wb.Sheets.Sheet1[colunDetalhe[k]+i].v)+"</td>";
-					}
-				} else{
-					htmlstr += "<td></td>";
-				}
+				htmlstr += "<td><button type='submit' class='btn btn-success btn-sm' data-toggle='modal' data-target='#myModal' onclick=\"detalhar('"+(global_wb.Sheets.Sheet1['A'+i].v)+"')\">Detalhar</button></td>";
 
-				if(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+i]){
-					if(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+i].w){
-						htmlstr += "<td>"+(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+i].w)+"</td>";
-					} else {
-						htmlstr += "<td>"+(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+i].v)+"</td>";
-					}
-				} else{
-					htmlstr += "<td></td>";
-				}
-
+				htmlstr += "<td>";
+				htmlstr += "<div style='display: none' id='detalhe"+(global_wb.Sheets.Sheet1['G'+i].v)+"'>";
+				htmlstr += "<table class='table table-striped mt-40'>";
+				htmlstr += "<thead>";
+				htmlstr += "<tr>";
+				htmlstr += "<th>Campo</th>";
+				htmlstr += "<th>De</th>";
+				htmlstr += "<th>Para</th>";
 				htmlstr += "</tr>";
+				htmlstr += "</thead>";
+				htmlstr += "<tbody>";			
+
+				for(var k = 0; k < colunDetalhe.length; k=k+3){
+					if(global_wb.Sheets.Sheet1[colunDetalhe[k]+i] && global_wb.Sheets.Sheet1[colunDetalhe[k+1]+i] && String(global_wb.Sheets.Sheet1[colunDetalhe[k]+i].v).trim() != String(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+i].v).trim()){
+						htmlstr += "<tr style='background: #FFAAAA'>";
+					} else {
+						htmlstr += "<tr>";
+					}
+
+					if(global_wb.Sheets.Sheet1[colunDetalhe[k]+1]){
+						htmlstr += "<td>"+(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+1].v)+"</td>";
+					} else{
+						htmlstr += "<td></td>";
+					}
+
+					if(global_wb.Sheets.Sheet1[colunDetalhe[k]+i]){
+						if((global_wb.Sheets.Sheet1[colunDetalhe[k]+i].w)){
+							htmlstr += "<td>"+(global_wb.Sheets.Sheet1[colunDetalhe[k]+i].w)+"</td>";
+						} else {
+							htmlstr += "<td>"+(global_wb.Sheets.Sheet1[colunDetalhe[k]+i].v)+"</td>";
+						}
+					} else{
+						htmlstr += "<td></td>";
+					}
+
+					if(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+i]){
+						if(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+i].w){
+							htmlstr += "<td>"+(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+i].w)+"</td>";
+						} else {
+							htmlstr += "<td>"+(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+i].v)+"</td>";
+						}
+					} else{
+						htmlstr += "<td></td>";
+					}
+
+					htmlstr += "</tr>";
+				}
+				
+				htmlstr += "</tbody>";
+				htmlstr += "</table>";
+				htmlstr += "</div>";
+				htmlstr += "</td>";
+
+				htmlstr += "</tr>"
+				
+				HTMLOUT.innerHTML = htmlstr;
+
+				var htmlPag = "<nav aria-label='Page navigation'>";
+				htmlPag += "<ul class='pagination'>";
+			
+				htmlPag += "</ul>";
+				htmlPag += "</nav>";
+			
+				$('#paginacao').html(htmlPag);
+			} else {
+				to_html();
+				show('alert2', true); 
+				document.getElementById('ZZGUID').style.borderColor = "red";
 			}
-			
-			htmlstr += "</tbody>";
-			htmlstr += "</table>";
-			htmlstr += "</div>";
-			htmlstr += "</td>";
-
-			htmlstr += "</tr>"
-			
-			HTMLOUT.innerHTML = htmlstr;
-
-			var htmlPag = "<nav aria-label='Page navigation'>";
-			htmlPag += "<ul class='pagination'>";
-		
-			htmlPag += "</ul>";
-			htmlPag += "</nav>";
-		
-			$('#paginacao').html(htmlPag);
-		} else {
-			to_html();
+		}catch(err){ 
+			loader(false); 
+			document.getElementById('ZZGUID').style.borderColor = "red"; 
+			show('alert', false); 
 			show('alert2', true); 
-			document.getElementById('ZZGUID').style.borderColor = "red";
-		}
-	}catch(err){ 
-		loader(false); 
-		document.getElementById('ZZGUID').style.borderColor = "red"; 
-		show('alert', false); 
-		show('alert2', true); 
-	} 
-	loader(false);
+		} 
+		loader(false);
+	}, 500);
+	
 };
 
 function limpar() {
 	loader(true);
-	$('#ZZGUID').val("");
-	to_html();
-	loader(false);
+	setTimeout(() => {
+		$('#ZZGUID').val("");
+		to_html();
+		loader(false)
+	}, 500);
 
 	limparErro();
 };
