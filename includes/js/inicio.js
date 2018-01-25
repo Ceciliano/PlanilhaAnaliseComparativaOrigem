@@ -38,21 +38,21 @@ function to_html() {
 		var htmlstr = "";
 
 		var key = JSON.stringify(global_wb.Sheets.Sheet1).match(/\"([A]{1})\d+/g,'');
-		var restoDivisao = (key.length - 2) % 30;
-		totalPagina = parseInt(Number((key.length - 2) / 30));
+		var restoDivisao = (key.length - 2) % 50;
+		totalPagina = parseInt(Number((key.length - 2) / 50));
 
 		if(restoDivisao > 0 && totalPagina > 0){
 			totalPagina = Number(totalPagina) + 1;
 		}
 
 		var limite = 0;	
-		if(key.length - 2 >= 31){
-			limite = (30 * pagina)+2;
+		if(key.length - 2 >= 51){
+			limite = (50 * pagina)+2;
 		}else{
 			limite = key.length;
 		}
 
-		var inic = limite - 30; 
+		var inic = limite - 50; 
 
 		for(var i = inic; i <= limite; i++){
 			if(!global_wb.Sheets.Sheet1['A'+i]){
@@ -137,7 +137,7 @@ function to_html() {
 
 		if(totalPagina > 1){
 			var htmlPag = "<nav aria-label='Page navigation'>";
-			htmlPag += "<ul class='pagination'>";
+			htmlPag += "<ul class='pagination' style='width-max: 950px; overflow-x: scroll'>";
 		
 			for(var i=1;i<=totalPagina;i++){
 				if(i == pagina){
