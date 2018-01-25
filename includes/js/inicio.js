@@ -52,7 +52,10 @@ function to_html(paginacao = false) {
 			limite = key.length;
 		}
 
-		var inic = limite - 100; 
+		var inic = 2;
+		if(limite > 100){
+			inic = limite - 100; 
+		}
 
 		for(var i = inic; i <= limite; i++){
 			if(!global_wb.Sheets.Sheet1['A'+i]){
@@ -139,10 +142,19 @@ function to_html(paginacao = false) {
 			if(totalPagina > 1){
 				var htmlPag = "<nav aria-label='Page navigation'>";
 				htmlPag += "<ul class='pagination' style='width-max: 950px; overflow-x: scroll'>";
-				htmlPag += "<li class='page-item action' id='pag1'><div class='page-link'>1</div></li>";
+
+				if(pagina == 1){
+					htmlPag += "<li class='page-item action' id='pag1'><div class='page-link' onclick='paginar(1)'>1</div></li>";
+				} else{
+					htmlPag += "<li class='page-item' id='pag1'><div class='page-link' onclick='paginar(1)'>1</div></li>";
+				}
 
 				for(var i=2;i<=totalPagina;i++){
+					if(pagina == i){
+						htmlPag += "<li class='page-item action' id='pag"+i+"'><div class='page-link' onclick=\"paginar("+i+")\">"+i+"</div></li>";
+					} else {
 						htmlPag += "<li class='page-item' id='pag"+i+"'><div class='page-link' onclick=\"paginar("+i+")\">"+i+"</div></li>";
+					}
 				}
 			
 				htmlPag += "</ul>";
@@ -166,7 +178,14 @@ function to_html(paginacao = false) {
 	loader(false); 	
 }
 
+function limparErro(){
+	document.getElementById('ZZGUID').style.borderColor = ""; 
+	show('alert', false); 
+	show('alert2', false); 
+}
+
 function paginar(pag) {
+	limparErro();
 	$( "li" ).removeClass( "action" );
 	$( "#pag"+pag ).addClass( "action" );
 	loader(true);
@@ -195,18 +214,18 @@ function do_file(files) {
 		loader(false); 
 	} 
 
-	document.getElementById('ZZGUID').style.borderColor = ""; 
-	show('alert', false); 
-	show('alert2', false); 
+	limparErro();
 };
 
 function buscar() {
 	
 	if($('#ZZGUID').val() != ''){ 
-		document.getElementById('ZZGUID').style.borderColor = ""; 
-		show('alert', false); 
-		show('alert2', false); 
+		limparErro();
 		loader(true); 
+	} else{
+		show('alert', true); 
+		document.getElementById('ZZGUID').style.borderColor = "red";
+		return;
 	}
 
 	try{ 
@@ -322,9 +341,7 @@ function limpar() {
 	to_html();
 	loader(false);
 
-	document.getElementById('ZZGUID').style.borderColor = ""; 
-	show('alert', false); 
-	show('alert2', false); 
+	limparErro();
 };
 
 (function() {
