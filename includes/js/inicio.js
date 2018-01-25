@@ -29,7 +29,7 @@ var process_wb = (function() {
 	};
 })();
 
-function to_html() {
+function to_html(paginacao = false) {
 	try{ 
 
 		var HTMLOUT = document.getElementById('corpo');
@@ -38,21 +38,21 @@ function to_html() {
 		var htmlstr = "";
 
 		var key = JSON.stringify(global_wb.Sheets.Sheet1).match(/\"([A]{1})\d+/g,'');
-		var restoDivisao = (key.length - 2) % 50;
-		totalPagina = parseInt(Number((key.length - 2) / 50));
+		var restoDivisao = (key.length - 2) % 100;
+		totalPagina = parseInt(Number((key.length - 2) / 100));
 
 		if(restoDivisao > 0 && totalPagina > 0){
 			totalPagina = Number(totalPagina) + 1;
 		}
 
 		var limite = 0;	
-		if(key.length - 2 >= 51){
-			limite = (50 * pagina)+2;
+		if(key.length - 2 >= 101){
+			limite = (100 * pagina)+2;
 		}else{
 			limite = key.length;
 		}
 
-		var inic = limite - 50; 
+		var inic = limite - 100; 
 
 		for(var i = inic; i <= limite; i++){
 			if(!global_wb.Sheets.Sheet1['A'+i]){
@@ -135,30 +135,29 @@ function to_html() {
 		HTMLOUT.innerHTML = htmlstr;
 		loader(false);
 
-		if(totalPagina > 1){
-			var htmlPag = "<nav aria-label='Page navigation'>";
-			htmlPag += "<ul class='pagination' style='width-max: 950px; overflow-x: scroll'>";
-		
-			for(var i=1;i<=totalPagina;i++){
-				if(i == pagina){
-					htmlPag += "<li class='page-item action'><div class='page-link'>"+i+"</div></li>";
-				}else{
-					htmlPag += "<li class='page-item'><div class='page-link' onclick=\"paginar("+i+")\">"+i+"</div></li>";
+		if(!paginacao){
+			if(totalPagina > 1){
+				var htmlPag = "<nav aria-label='Page navigation'>";
+				htmlPag += "<ul class='pagination' style='width-max: 950px; overflow-x: scroll'>";
+				htmlPag += "<li class='page-item action' id='pag1'><div class='page-link'>1</div></li>";
+
+				for(var i=2;i<=totalPagina;i++){
+						htmlPag += "<li class='page-item' id='pag"+i+"'><div class='page-link' onclick=\"paginar("+i+")\">"+i+"</div></li>";
 				}
+			
+				htmlPag += "</ul>";
+				htmlPag += "</nav>";
+			
+				$('#paginacao').html(htmlPag);
+			} else{
+				var htmlPag = "<nav aria-label='Page navigation'>";
+				htmlPag += "<ul class='pagination'>";
+			
+				htmlPag += "</ul>";
+				htmlPag += "</nav>";
+			
+				$('#paginacao').html(htmlPag);
 			}
-		
-			htmlPag += "</ul>";
-			htmlPag += "</nav>";
-		
-			$('#paginacao').html(htmlPag);
-		} else{
-			var htmlPag = "<nav aria-label='Page navigation'>";
-			htmlPag += "<ul class='pagination'>";
-		
-			htmlPag += "</ul>";
-			htmlPag += "</nav>";
-		
-			$('#paginacao').html(htmlPag);
 		}
 
 	}catch(err){ 
@@ -168,9 +167,11 @@ function to_html() {
 }
 
 function paginar(pag) {
+	$( "li" ).removeClass( "action" );
+	$( "#pag"+pag ).addClass( "action" );
 	loader(true);
 	pagina = pag;	
-	to_html();
+	to_html(true);
 	loader(false);
 };
 
