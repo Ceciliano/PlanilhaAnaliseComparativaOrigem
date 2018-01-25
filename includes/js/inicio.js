@@ -136,7 +136,6 @@ function to_html(paginacao = false) {
 		}
 		
 		HTMLOUT.innerHTML = htmlstr;
-		loader(false);
 
 		if(!paginacao){
 			if(totalPagina > 1){
@@ -174,8 +173,6 @@ function to_html(paginacao = false) {
 
 	}catch(err){ 
 	} 
-
-	loader(false); 	
 }
 
 function limparErro(){
@@ -185,13 +182,13 @@ function limparErro(){
 }
 
 function paginar(pag) {
+	loader(true); 
 	limparErro();
 	$( "li" ).removeClass( "action" );
 	$( "#pag"+pag ).addClass( "action" );
-	loader(true);
 	pagina = pag;	
 	to_html(true);
-	loader(false);
+	loader(false); 
 };
 
 function do_file(files) {
@@ -206,6 +203,7 @@ function do_file(files) {
 	reader.onload = function(e) {
 		var data = e.target.result;
 		process_wb(X.read(data, {type: 'array'}));
+		loader(false); 
 	};
 
 	try{ 
@@ -380,17 +378,13 @@ function show(id, value) {
     document.getElementById(id).style.display = value ? 'block' : 'none';
 }
 
-function opacity(id, value){
-	document.getElementById(id).style.opacity = value ? 1 : 0.5;
-}
-
 
 function loader(value){
 	if(value){
-		opacity('myDiv', false);
-		show('loader', true);
+		$('#loader').show();
+		$('#myDiv').css( "opacity", 0.5);
 	}else{
-		show('loader', false);
-		opacity('myDiv', true);
+		$('#loader').hide();
+		$('#myDiv').css( "opacity", 1);
 	}
 }
