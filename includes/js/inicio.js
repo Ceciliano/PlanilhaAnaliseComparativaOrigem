@@ -59,28 +59,33 @@ function to_html(paginacao = false) {
 		var htmlstr = "";
 
 		var key = JSON.stringify(global_wb.Sheets.Sheet1).match(/\"([G]{1})\d+/g,'');
-		var restoDivisao = (key.length - 1) % 100;
-		totalPagina = parseInt(Number((key.length - 1) / 100));
-
-		if(restoDivisao > 0 && totalPagina > 0){
-			totalPagina = Number(totalPagina) + 1;
-		}
-
-		var limite = 0;	
-		if(key.length - 1 > 100){
-			limite = (100 * pagina);
-		}else{
-			limite = key.length - 1;
-		}
-
+//		var restoDivisao = (key.length - 1) % 100;
+//		totalPagina = parseInt(Number((key.length - 1) / 100));
+//
+//		if(restoDivisao > 0 && totalPagina > 0){
+//			totalPagina = Number(totalPagina) + 1;
+//		}
+//
+//		var limite = 0;	
+//		if(key.length - 1 > 100){
+//			limite = (100 * pagina);
+//		}else{
+//			limite = key.length - 1;
+//		}
+//
 		var inic = 1;
-		if(limite > 100){
-			inic = limite - 100; 
-		}
+//		if(limite > 100){
+//			inic = limite - 100; 
+//		}
 
-		for(var i = inic; i <= limite; i++){		
+		for(var i = inic; i <= key.length; i++){		
 			
-			if($("#detalhe"+global_wb.Sheets.Sheet1['G'+key[i].replace(/[^0-9]/g,'')].v).length > 0){				
+			if(!key[i] || !global_wb.Sheets.Sheet1['G'+key[i].replace(/[^0-9]/g,'')]){
+				break;
+			}
+			
+			if($("#detalhe"+global_wb.Sheets.Sheet1['G'+key[i].replace(/[^0-9]/g,'')].v).length > 0){
+				
 				htmlstr += "<tr>";
 				
 				if(global_wb.Sheets.Sheet1['AO'+key[i].replace(/[^0-9]/g,'')]){
@@ -106,8 +111,7 @@ function to_html(paginacao = false) {
 					if((global_wb.Sheets.Sheet1[colunDetalhe[k]+key[i].replace(/[^0-9]/g,'')] && global_wb.Sheets.Sheet1[colunDetalhe[k+1]+key[i].replace(/[^0-9]/g,'')] && 
 							String(global_wb.Sheets.Sheet1[colunDetalhe[k]+key[i].replace(/[^0-9]/g,'')].v).trim() != String(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+key[i].replace(/[^0-9]/g,'')].v).trim()) || 
 							global_wb.Sheets.Sheet1[colunDetalhe[k+2]+key[i].replace(/[^0-9]/g,'')].v == 0){
-						htmlstr += "<tr style='background: #FFAAAA'>";
-						
+						htmlstr += "<tr style='background: #FFAAAA'>";						
 					} else {
 						htmlstr += "<tr>";
 					}
@@ -163,10 +167,6 @@ function to_html(paginacao = false) {
 				continue;
 			}
 			
-			if(!key[i] || !global_wb.Sheets.Sheet1['G'+key[i].replace(/[^0-9]/g,'')]){
-				break;
-			}
-
 			htmlstr += "<tr>";
 			
 			for(var y = 0; y < colunTitulo.length; y++){
@@ -283,39 +283,47 @@ function to_html(paginacao = false) {
 			htmlstr = "";
 		}	
 		
-		if(!paginacao){
-			if(totalPagina > 1){
-				var htmlPag = "<nav aria-label='Page navigation'>";
-				htmlPag += "<ul class='pagination' style='width-max: 950px; overflow-x: scroll'>";
-
-				if(pagina == 1){
-					htmlPag += "<li class='page-item action' id='pag1'><div class='page-link' onclick='paginar(1)'>1</div></li>";
-				} else{
-					htmlPag += "<li class='page-item' id='pag1'><div class='page-link' onclick='paginar(1)'>1</div></li>";
-				}
-
-				for(var i=2;i<=totalPagina;i++){
-					if(pagina == i){
-						htmlPag += "<li class='page-item action' id='pag"+i+"'><div class='page-link' onclick=\"paginar("+i+")\">"+i+"</div></li>";
-					} else {
-						htmlPag += "<li class='page-item' id='pag"+i+"'><div class='page-link' onclick=\"paginar("+i+")\">"+i+"</div></li>";
-					}
-				}
-			
-				htmlPag += "</ul>";
-				htmlPag += "</nav>";
-			
-				$('#paginacao').html(htmlPag);
-			} else{
-				var htmlPag = "<nav aria-label='Page navigation'>";
-				htmlPag += "<ul class='pagination'>";
-			
-				htmlPag += "</ul>";
-				htmlPag += "</nav>";
-			
-				$('#paginacao').html(htmlPag);
-			}
-		}
+//		if(!paginacao){
+//			if(totalPagina > 1){
+//				var htmlPag = "<nav aria-label='Page navigation'>";
+//				htmlPag += "<ul class='pagination' style='width-max: 950px; overflow-x: scroll'>";
+//
+//				if(pagina == 1){
+//					htmlPag += "<li class='page-item action' id='pag1'><div class='page-link' onclick='paginar(1)'>1</div></li>";
+//				} else{
+//					htmlPag += "<li class='page-item' id='pag1'><div class='page-link' onclick='paginar(1)'>1</div></li>";
+//				}
+//
+//				for(var i=2;i<=totalPagina;i++){
+//					if(pagina == i){
+//						htmlPag += "<li class='page-item action' id='pag"+i+"'><div class='page-link' onclick=\"paginar("+i+")\">"+i+"</div></li>";
+//					} else {
+//						htmlPag += "<li class='page-item' id='pag"+i+"'><div class='page-link' onclick=\"paginar("+i+")\">"+i+"</div></li>";
+//					}
+//				}
+//			
+//				htmlPag += "</ul>";
+//				htmlPag += "</nav>";
+//			
+//				$('#paginacao').html(htmlPag);
+//			} else{
+//				var htmlPag = "<nav aria-label='Page navigation'>";
+//				htmlPag += "<ul class='pagination'>";
+//			
+//				htmlPag += "</ul>";
+//				htmlPag += "</nav>";
+//			
+//				$('#paginacao').html(htmlPag);
+//			}
+//		}
+		
+		var htmlPag = "<nav aria-label='Page navigation'>";
+		htmlPag += "<ul class='pagination'>";
+	
+		htmlPag += "</ul>";
+		htmlPag += "</nav>";
+	
+		$('#paginacao').html(htmlPag);
 
 	}catch(err){ 
 	} 
@@ -378,127 +386,224 @@ function buscar() {
 	}
 
 	setTimeout(() => {
-		try{ 
-			var key = _.findKey(global_wb.Sheets.Sheet1, {
-				v: $('#ZZGUID').val()
-			});
-
-			if(key){
-				var HTMLOUT = document.getElementById('corpo');
-				HTMLOUT.innerHTML = "";
-				var i = key.replace(/[^\d]+/g,'');
-				var htmlstr = "";
-
+		try{
+			var key = [];
+			
+			var HTMLOUT = document.getElementById('corpo');
+			HTMLOUT.innerHTML = "";
+			
+			var keys = JSON.stringify(global_wb.Sheets.Sheet1).match(/\"([G]{1})\d+/g,'');
+			
+		    for (var find = 0; find < keys.length; find++) {
+		    	if(global_wb.Sheets.Sheet1['G'+keys[find].replace(/[^0-9]/g,'')].v == $('#ZZGUID').val()){
+		    		key.push('G'+keys[find].replace(/[^0-9]/g,''));
+		    	}
+		    }
+			
+			if(key.length > 0){	
 				
-				htmlstr += "<tr id=A"+i+">"
-				for(var y = 0; y < colunTitulo.length; y++){
-					if(global_wb.Sheets.Sheet1[colunTitulo[y]+key.replace(/[^0-9]/g,'')]){
-						if(global_wb.Sheets.Sheet1[colunTitulo[y]+key.replace(/[^0-9]/g,'')].w){
-							htmlstr += "<td>"+(global_wb.Sheets.Sheet1[colunTitulo[y]+key.replace(/[^0-9]/g,'')].w)+"</td>";
-						} else {
-							htmlstr += "<td>"+(global_wb.Sheets.Sheet1[colunTitulo[y]+key.replace(/[^0-9]/g,'')].v)+"</td>";
-						}
-					} else{
-						htmlstr += "<td></td>";
-					}
-				}
-
-				htmlstr += "</td>";
-
-				htmlstr += "<td><button type='submit' class='btn btn-success btn-sm' data-toggle='modal' data-target='#myModal' onclick=\"detalhar('"+(global_wb.Sheets.Sheet1['G'+key.replace(/[^0-9]/g,'')].v)+"')\">Detalhar</button></td>";
-
-				htmlstr += "<td>";
-				htmlstr += "<div style='display: none' id='detalhe"+(global_wb.Sheets.Sheet1['G'+key.replace(/[^0-9]/g,'')].v)+"'>";
-				htmlstr += "<table class='table table-striped mt-40'>";
-				htmlstr += "<thead>";
-				htmlstr += "<tr>";
-				
-				if(global_wb.Sheets.Sheet1['AO'+key.replace(/[^0-9]/g,'')]){
-					htmlstr += "<th>" + "Opção Comercial: " +  global_wb.Sheets.Sheet1['AO'+key.replace(/[^0-9]/g,'')].v + "</th>";
-				} else{
-					htmlstr += "<th> </th>";
-				}
-				
-				if(global_wb.Sheets.Sheet1['AC'+key.replace(/[^0-9]/g,'')]){
-					htmlstr += "<th>" + "Complemento de Opção Comercial: " +  global_wb.Sheets.Sheet1['AC'+key.replace(/[^0-9]/g,'')].v + "</th>";
-				} else{
-					htmlstr += "<th> </th>";
-				}
-				
-				htmlstr += "</tr>";
-				htmlstr += "<tr>";
-				htmlstr += "<th>Campo</th>";
-				htmlstr += "<th>De</th>";
-				htmlstr += "<th>Para</th>";
-				htmlstr += "</tr>";
-				htmlstr += "</thead>";
-				htmlstr += "<tbody>";			
-
-				for(var k = 0; k < colunDetalhe.length; k=k+3){
+				for(var i = 0; i < key.length; i++){			
 					
-					if(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+1].v == "ZZOPCOM2_parceiro" || global_wb.Sheets.Sheet1[colunDetalhe[k+1]+1].v == "ZZOPCOM1_parceiro"){
+					var y = String(key[i]).replace(/[^\d]+/g,'');
+					var htmlstr = "";
+					
+					if($("#detalhe"+global_wb.Sheets.Sheet1['G'+y].v).length > 0){
+						
+						htmlstr += "<tr>";
+						
+						if(global_wb.Sheets.Sheet1['AO'+key[i].replace(/[^0-9]/g,'')]){
+							htmlstr += "<th>" + "Opção Comercial: " +  global_wb.Sheets.Sheet1['AO'+y].v + "</th>";
+						} else{
+							htmlstr += "<th> </th>";
+						}
+						
+						if(global_wb.Sheets.Sheet1['AC'+y]){
+							htmlstr += "<th>" + "Complemento de Opção Comercial: " +  global_wb.Sheets.Sheet1['AC'+y].v + "</th>";
+						} else{
+							htmlstr += "<th> </th>";
+						}
+						
+						htmlstr += "</tr>";
+						
+						for(var k = 0; k < colunDetalhe.length; k=k+3){
+							
+							if(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+1].v == "ZZOPCOM2_parceiro" || global_wb.Sheets.Sheet1[colunDetalhe[k+1]+1].v == "ZZOPCOM1_parceiro"){
+								continue;
+							}
+	
+							if((global_wb.Sheets.Sheet1[colunDetalhe[k]+y] && global_wb.Sheets.Sheet1[colunDetalhe[k+1]+y] && 
+									String(global_wb.Sheets.Sheet1[colunDetalhe[k]+y].v).trim() != String(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+y].v).trim()) || 
+									global_wb.Sheets.Sheet1[colunDetalhe[k+2]+y].v == 0){
+								htmlstr += "<tr style='background: #FFAAAA'>";
+								
+							} else {
+								htmlstr += "<tr>";
+							}
+	
+							if(global_wb.Sheets.Sheet1[colunDetalhe[k]+1]){
+								if(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+1].v == "ZZCIAEX_apolice"){
+									htmlstr += "<td> CIA EXTERNA </td>";
+								}					
+								if(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+1].v == "ZZCIAIN_apolice"){
+									htmlstr += "<td> CIA INTERNA </td>";
+								}
+								if(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+1].v == "ZZRMINT_parceiro"){
+									htmlstr += "<td> RAMO </td>";
+								}
+								if(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+1].v == "ZZNAPOL_apolice"){
+									htmlstr += "<td> APÓLICE </td>";
+								}
+								if(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+1].v == "ZZRMCAL_parceiro"){
+									htmlstr += "<td> VALOR COMISSÃO </td>";
+								}
+								
+							} else{
+								htmlstr += "<td></td>";
+							}
+	
+							if(global_wb.Sheets.Sheet1[colunDetalhe[k]+y]){
+								if((global_wb.Sheets.Sheet1[colunDetalhe[k]+y].w)){
+									htmlstr += "<td>"+(global_wb.Sheets.Sheet1[colunDetalhe[k]+y].w)+"</td>";
+								} else {
+									htmlstr += "<td>"+(global_wb.Sheets.Sheet1[colunDetalhe[k]+y].v)+"</td>";
+								}
+							} else{
+								htmlstr += "<td></td>";
+							}
+	
+							if(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+y]){
+								if(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+y].w){
+									htmlstr += "<td>"+(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+y].w)+"</td>";
+								} else {
+									htmlstr += "<td>"+(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+y].v)+"</td>";
+								}
+							} else{
+								htmlstr += "<td></td>";
+							}
+	
+							htmlstr += "</tr>";
+						}
+						
+						$("#detalhe"+global_wb.Sheets.Sheet1['G'+y].v + " > table > tbody").append(htmlstr);
+						
+						htmlstr = "";
+						
 						continue;
 					}
 					
-					if(global_wb.Sheets.Sheet1[colunDetalhe[k]+key.replace(/[^0-9]/g,'')] && global_wb.Sheets.Sheet1[colunDetalhe[k+1]+key.replace(/[^0-9]/g,'')] && String(global_wb.Sheets.Sheet1[colunDetalhe[k]+key.replace(/[^0-9]/g,'')].v).trim() != String(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+key.replace(/[^0-9]/g,'')].v).trim()){
-						htmlstr += "<tr style='background: #FFAAAA'>";
-					} else {
-						htmlstr += "<tr>";
+					htmlstr += "<tr>"
+					for(var h = 0; h < colunTitulo.length; h++){
+						if(global_wb.Sheets.Sheet1[colunTitulo[h]+y]){
+							if(global_wb.Sheets.Sheet1[colunTitulo[h]+y].w){
+								htmlstr += "<td>"+(global_wb.Sheets.Sheet1[colunTitulo[h]+y].w)+"</td>";
+							} else {
+								htmlstr += "<td>"+(global_wb.Sheets.Sheet1[colunTitulo[h]+y].v)+"</td>";
+							}
+						} else{
+							htmlstr += "<td></td>";
+						}
 					}
-
-					if(global_wb.Sheets.Sheet1[colunDetalhe[k]+1]){
-						if(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+1].v == "ZZCIAEX_apolice"){
-							htmlstr += "<td> CIA EXTERNA </td>";
-						}
-						if(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+1].v == "ZZCIAIN_apolice"){
-							htmlstr += "<td> CIA INTERNA </td>";
-						}
-						if(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+1].v == "ZZRMINT_parceiro"){
-							htmlstr += "<td> RAMO </td>";
-						}
-						if(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+1].v == "ZZNAPOL_apolice"){
-							htmlstr += "<td> APÓLICE </td>";
-						}
-						if(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+1].v == "ZZRMCAL_parceiro"){
-							htmlstr += "<td> VALOR COMISSÃO </td>";
-						}
-
+	
+					htmlstr += "</td>";
+	
+					htmlstr += "<td><button type='submit' class='btn btn-success btn-sm' data-toggle='modal' data-target='#myModal' onclick=\"detalhar('"+(global_wb.Sheets.Sheet1['G'+y].v)+"')\">Detalhar</button></td>";
+	
+					htmlstr += "<td>";
+					htmlstr += "<div style='display: none' id='detalhe"+(global_wb.Sheets.Sheet1['G'+y].v)+"'>";
+					htmlstr += "<table class='table table-striped mt-40'>";
+					htmlstr += "<thead>";
+					htmlstr += "<tr>";
+					
+					if(global_wb.Sheets.Sheet1['AO'+y]){
+						htmlstr += "<th>" + "Opção Comercial: " +  global_wb.Sheets.Sheet1['AO'+y].v + "</th>";
 					} else{
-						htmlstr += "<td></td>";
+						htmlstr += "<th> </th>";
 					}
-
-					if(global_wb.Sheets.Sheet1[colunDetalhe[k]+key.replace(/[^0-9]/g,'')]){
-						if((global_wb.Sheets.Sheet1[colunDetalhe[k]+key.replace(/[^0-9]/g,'')].w)){
-							htmlstr += "<td>"+(global_wb.Sheets.Sheet1[colunDetalhe[k]+key.replace(/[^0-9]/g,'')].w)+"</td>";
-						} else {
-							htmlstr += "<td>"+(global_wb.Sheets.Sheet1[colunDetalhe[k]+key.replace(/[^0-9]/g,'')].v)+"</td>";
-						}
+					
+					if(global_wb.Sheets.Sheet1['AC'+y]){
+						htmlstr += "<th>" + "Complemento de Opção Comercial: " +  global_wb.Sheets.Sheet1['AC'+y].v + "</th>";
 					} else{
-						htmlstr += "<td></td>";
+						htmlstr += "<th> </th>";
 					}
-
-					if(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+key.replace(/[^0-9]/g,'')]){
-						if(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+key.replace(/[^0-9]/g,'')].w){
-							htmlstr += "<td>"+(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+key.replace(/[^0-9]/g,'')].w)+"</td>";
-						} else {
-							htmlstr += "<td>"+(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+key.replace(/[^0-9]/g,'')].v)+"</td>";
-						}
-					} else{
-						htmlstr += "<td></td>";
-					}
-
+					
 					htmlstr += "</tr>";
+					htmlstr += "<tr>";
+					htmlstr += "<th>Campo</th>";
+					htmlstr += "<th>De</th>";
+					htmlstr += "<th>Para</th>";
+					htmlstr += "</tr>";
+					htmlstr += "</thead>";
+					htmlstr += "<tbody>";			
+	
+					for(var k = 0; k < colunDetalhe.length; k=k+3){
+						
+						if(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+1].v == "ZZOPCOM2_parceiro" || global_wb.Sheets.Sheet1[colunDetalhe[k+1]+1].v == "ZZOPCOM1_parceiro"){
+							continue;
+						}
+						
+						if((global_wb.Sheets.Sheet1[colunDetalhe[k]+y] && global_wb.Sheets.Sheet1[colunDetalhe[k+1]+y] && 
+							String(global_wb.Sheets.Sheet1[colunDetalhe[k]+y].v).trim() != String(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+y].v).trim()) || 
+							global_wb.Sheets.Sheet1[colunDetalhe[k+2]+y].v == 0){
+							htmlstr += "<tr style='background: #FFAAAA'>";
+						} else {
+							htmlstr += "<tr>";
+						}
+	
+						if(global_wb.Sheets.Sheet1[colunDetalhe[k]+1]){
+							if(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+1].v == "ZZCIAEX_apolice"){
+								htmlstr += "<td> CIA EXTERNA </td>";
+							}
+							if(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+1].v == "ZZCIAIN_apolice"){
+								htmlstr += "<td> CIA INTERNA </td>";
+							}
+							if(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+1].v == "ZZRMINT_parceiro"){
+								htmlstr += "<td> RAMO </td>";
+							}
+							if(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+1].v == "ZZNAPOL_apolice"){
+								htmlstr += "<td> APÓLICE </td>";
+							}
+							if(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+1].v == "ZZRMCAL_parceiro"){
+								htmlstr += "<td> VALOR COMISSÃO </td>";
+							}
+	
+						} else{
+							htmlstr += "<td></td>";
+						}
+	
+						if(global_wb.Sheets.Sheet1[colunDetalhe[k]+y]){
+							if((global_wb.Sheets.Sheet1[colunDetalhe[k]+y].w)){
+								htmlstr += "<td>"+(global_wb.Sheets.Sheet1[colunDetalhe[k]+y].w)+"</td>";
+							} else {
+								htmlstr += "<td>"+(global_wb.Sheets.Sheet1[colunDetalhe[k]+y].v)+"</td>";
+							}
+						} else{
+							htmlstr += "<td></td>";
+						}
+	
+						if(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+y]){
+							if(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+y].w){
+								htmlstr += "<td>"+(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+y].w)+"</td>";
+							} else {
+								htmlstr += "<td>"+(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+y].v)+"</td>";
+							}
+						} else{
+							htmlstr += "<td></td>";
+						}
+	
+						htmlstr += "</tr>";
+					}
+					
+					htmlstr += "</tbody>";
+					htmlstr += "</table>";
+					htmlstr += "</div>";
+					htmlstr += "</td>";
+	
+					htmlstr += "</tr>"
+					
+					HTMLOUT.innerHTML += htmlstr;
+					htmlstr = "";
 				}
 				
-				htmlstr += "</tbody>";
-				htmlstr += "</table>";
-				htmlstr += "</div>";
-				htmlstr += "</td>";
-
-				htmlstr += "</tr>"
-				
-				HTMLOUT.innerHTML = htmlstr;
-
 				var htmlPag = "<nav aria-label='Page navigation'>";
 				htmlPag += "<ul class='pagination'>";
 			
@@ -506,6 +611,8 @@ function buscar() {
 				htmlPag += "</nav>";
 			
 				$('#paginacao').html(htmlPag);
+				
+				
 			} else {
 				to_html();
 				show('alert2', true); 
