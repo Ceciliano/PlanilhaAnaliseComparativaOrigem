@@ -58,23 +58,23 @@ function to_html(paginacao = false) {
 		var htmlstr = "";
 
 		var key = JSON.stringify(global_wb.Sheets.Sheet1).match(/\"([G]{1})\d+/g,'');
-		var restoDivisao = (key.length - 1) % 3;
-		totalPagina = parseInt(Number((key.length - 1) / 3));
+		var restoDivisao = (key.length - 1) % 100;
+		totalPagina = parseInt(Number((key.length - 1) / 100));
 
 		if(restoDivisao > 0 && totalPagina > 0){
 			totalPagina = Number(totalPagina) + 1;
 		}
 
 		var limite = 0;	
-		if(key.length - 1 > 3){
-			limite = (3 * pagina);
+		if(key.length - 1 > 100){
+			limite = (100 * pagina);
 		}else{
 			limite = key.length - 1;
 		}
 
 		var inic = 1;
-		if(limite > 3){
-			inic = limite - 3; 
+		if(limite > 100){
+			inic = limite - 100; 
 		}
 
 		for(var i = inic; i <= limite; i++){		
@@ -104,8 +104,19 @@ function to_html(paginacao = false) {
 			htmlstr += "<table class='table table-striped mt-40'>";
 			htmlstr += "<thead>";
 			htmlstr += "<tr>";
-			htmlstr += "<th>" + "Opção Comercial: " +  global_wb.Sheets.Sheet1['AO'+key[i].replace(/[^0-9]/g,'')].v + "</th>";
-			htmlstr += "<th>" + "Complemento de Opção Comercial: " +  global_wb.Sheets.Sheet1['AC'+key[i].replace(/[^0-9]/g,'')].v + "</th>";
+			
+			if(global_wb.Sheets.Sheet1['AO'+key[i].replace(/[^0-9]/g,'')]){
+				htmlstr += "<th>" + "Opção Comercial: " +  global_wb.Sheets.Sheet1['AO'+key[i].replace(/[^0-9]/g,'')].v + "</th>";
+			} else{
+				htmlstr += "<th> </th>";
+			}
+			
+			if(global_wb.Sheets.Sheet1['AC'+key[i].replace(/[^0-9]/g,'')]){
+				htmlstr += "<th>" + "Complemento de Opção Comercial: " +  global_wb.Sheets.Sheet1['AC'+key[i].replace(/[^0-9]/g,'')].v + "</th>";
+			} else{
+				htmlstr += "<th> </th>";
+			}
+			
 			htmlstr += "</tr>";
 			htmlstr += "<tr>";
 			htmlstr += "<th>Campo</th>";
@@ -116,6 +127,11 @@ function to_html(paginacao = false) {
 			htmlstr += "<tbody>";			
 
 			for(var k = 0; k < colunDetalhe.length; k=k+3){
+				
+				if(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+1].v == "ZZOPCOM2_parceiro" || global_wb.Sheets.Sheet1[colunDetalhe[k+1]+1].v == "ZZOPCOM1_parceiro"){
+					continue;
+				}
+
 				if(global_wb.Sheets.Sheet1[colunDetalhe[k]+key[i].replace(/[^0-9]/g,'')] && global_wb.Sheets.Sheet1[colunDetalhe[k+1]+key[i].replace(/[^0-9]/g,'')] && String(global_wb.Sheets.Sheet1[colunDetalhe[k]+key[i].replace(/[^0-9]/g,'')].v).trim() != String(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+key[i].replace(/[^0-9]/g,'')].v).trim()){
 					htmlstr += "<tr style='background: #FFAAAA'>";
 					
@@ -126,17 +142,9 @@ function to_html(paginacao = false) {
 				if(global_wb.Sheets.Sheet1[colunDetalhe[k]+1]){
 					if(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+1].v == "ZZCIAEX_apolice"){
 						htmlstr += "<td> CIA EXTERNA </td>";
-					}
-					if(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+1].v == "ZZOPCOM2_parceiro"){
-						continue;
-//						htmlstr += "<td> COMPLEMENTO DE OPÇÃO COMERCIAL </td>";
-					}
+					}					
 					if(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+1].v == "ZZCIAIN_apolice"){
 						htmlstr += "<td> CIA INTERNA </td>";
-					}
-					if(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+1].v == "ZZOPCOM1_parceiro"){
-						continue;
-//						htmlstr += "<td> OPÇÃO COMERCIAL </td>";
 					}
 					if(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+1].v == "ZZRMINT_parceiro"){
 						htmlstr += "<td> RAMO </td>";
@@ -148,7 +156,6 @@ function to_html(paginacao = false) {
 						htmlstr += "<td> VALOR COMISSÃO </td>";
 					}
 					
-//					htmlstr += "<td>"+(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+1].v)+"</td>";
 				} else{
 					htmlstr += "<td></td>";
 				}
@@ -316,8 +323,19 @@ function buscar() {
 				htmlstr += "<table class='table table-striped mt-40'>";
 				htmlstr += "<thead>";
 				htmlstr += "<tr>";
-				htmlstr += "<th>" + "Opção Comercial: " +  global_wb.Sheets.Sheet1['AO'+key.replace(/[^0-9]/g,'')].v + "</th>";
-				htmlstr += "<th>" + "Complemento de Opção Comercial: " +  global_wb.Sheets.Sheet1['AC'+key.replace(/[^0-9]/g,'')].v + "</th>";
+				
+				if(global_wb.Sheets.Sheet1['AO'+key.replace(/[^0-9]/g,'')]){
+					htmlstr += "<th>" + "Opção Comercial: " +  global_wb.Sheets.Sheet1['AO'+key.replace(/[^0-9]/g,'')].v + "</th>";
+				} else{
+					htmlstr += "<th> </th>";
+				}
+				
+				if(global_wb.Sheets.Sheet1['AC'+key.replace(/[^0-9]/g,'')]){
+					htmlstr += "<th>" + "Complemento de Opção Comercial: " +  global_wb.Sheets.Sheet1['AC'+key.replace(/[^0-9]/g,'')].v + "</th>";
+				} else{
+					htmlstr += "<th> </th>";
+				}
+				
 				htmlstr += "</tr>";
 				htmlstr += "<tr>";
 				htmlstr += "<th>Campo</th>";
@@ -328,6 +346,11 @@ function buscar() {
 				htmlstr += "<tbody>";			
 
 				for(var k = 0; k < colunDetalhe.length; k=k+3){
+					
+					if(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+1].v == "ZZOPCOM2_parceiro" || global_wb.Sheets.Sheet1[colunDetalhe[k+1]+1].v == "ZZOPCOM1_parceiro"){
+						continue;
+					}
+					
 					if(global_wb.Sheets.Sheet1[colunDetalhe[k]+key.replace(/[^0-9]/g,'')] && global_wb.Sheets.Sheet1[colunDetalhe[k+1]+key.replace(/[^0-9]/g,'')] && String(global_wb.Sheets.Sheet1[colunDetalhe[k]+key.replace(/[^0-9]/g,'')].v).trim() != String(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+key.replace(/[^0-9]/g,'')].v).trim()){
 						htmlstr += "<tr style='background: #FFAAAA'>";
 					} else {
@@ -338,16 +361,8 @@ function buscar() {
 						if(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+1].v == "ZZCIAEX_apolice"){
 							htmlstr += "<td> CIA EXTERNA </td>";
 						}
-						if(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+1].v == "ZZOPCOM2_parceiro"){
-							continue;
-//							htmlstr += "<td> COMPLEMENTO DE OPÇÃO COMERCIAL </td>";
-						}
 						if(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+1].v == "ZZCIAIN_apolice"){
 							htmlstr += "<td> CIA INTERNA </td>";
-						}
-						if(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+1].v == "ZZOPCOM1_parceiro"){
-							continue;
-//							htmlstr += "<td> OPÇÃO COMERCIAL </td>";
 						}
 						if(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+1].v == "ZZRMINT_parceiro"){
 							htmlstr += "<td> RAMO </td>";
@@ -358,7 +373,7 @@ function buscar() {
 						if(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+1].v == "ZZRMCAL_parceiro"){
 							htmlstr += "<td> VALOR COMISSÃO </td>";
 						}
-//						htmlstr += "<td>"+(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+1].v)+"</td>";
+
 					} else{
 						htmlstr += "<td></td>";
 					}
