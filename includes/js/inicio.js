@@ -11,20 +11,40 @@ var XW = {
 	worker: './xlsxworker.js'
 };
 
-var global_wb;
+var global_wb = {Sheets:{Sheet1:{}}};
 var pagina = 1;
 var totalPagina = 0;
-var colunTitulo = ['G','H','I','J','K','L'];
-var colunDetalhe = ['M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','AA','AB','AC','AD','AE','AF','AG','AH','AI','AJ',
-					'AK','AL','AM','AN','AO','AP','AQ','AR','AS','AT','AU','AV','AW','AX','AY','AZ',
-					'BA','BB','BC','BD','BE','BF','BG','BH','BI','BJ','BK','BL','BM','BN','BO','BP','BQ','BS','BT','BU','BV','BW','BX','BY','BZ',
-					'CA','CB','CC','CD','CE','CF','CG','CH','CI','CJ','CK','CL','CM','CN','CO','CP','CQ','CR','CS','CT','CU','CV','CW','CX','CY','CZ',
-					'DA','DB','DC','DD','DE','DF','DG','DH','DI','DJ','DK','DL','DM','DN','DO','DP','DQ','DS','DT','DU','DV','DW','DX','DY','DZ',
-					'EA','EB','EC','ED','EE','EF','EG'];
+var colunTitulo = ['G','I','J','K','L'];
+var colunDetalhe = ['S','T','U','AB','AC','AD','AH','AI','AJ','AN','AO','AP','AQ','AR','AS','CK','CL','CM',
+					'DV', 'DW', 'DX'];
+
 
 var process_wb = (function() {
 	return function process_wb(wb) {
-		global_wb = wb;
+		
+		var key = JSON.stringify(wb.Sheets.Sheet1).match(/\"([A]{1})\d+/g,'');
+
+		
+		for(var i = 1; i < (key.length - 1); i++){
+			
+			if(!wb.Sheets.Sheet1['A'+i]){
+				break;
+			}	
+
+			if(i != 1 && wb.Sheets.Sheet1['U'+i].v == 1 && wb.Sheets.Sheet1['AD'+i].v == 1 && wb.Sheets.Sheet1['AJ'+i].v == 1 && wb.Sheets.Sheet1['AP'+i].v == 1 && wb.Sheets.Sheet1['AS'+i].v == 1 && wb.Sheets.Sheet1['CM'+i].v == 1){
+				continue;
+			} else{
+				for(var t in colunTitulo){
+					global_wb.Sheets.Sheet1[colunTitulo[t]+i] = wb.Sheets.Sheet1[colunTitulo[t]+i];
+				}
+				
+				for(var y in colunDetalhe){
+					global_wb.Sheets.Sheet1[colunDetalhe[y]+i] = wb.Sheets.Sheet1[colunDetalhe[y]+i];
+				}
+			}	
+			
+		}		
+		
 		to_html();
 	};
 })();
@@ -37,52 +57,56 @@ function to_html(paginacao = false) {
 		HTMLOUT.innerHTML = "";
 		var htmlstr = "";
 
-		var key = JSON.stringify(global_wb.Sheets.Sheet1).match(/\"([A]{1})\d+/g,'');
-		var restoDivisao = (key.length - 2) % 100;
-		totalPagina = parseInt(Number((key.length - 2) / 100));
+		var key = JSON.stringify(global_wb.Sheets.Sheet1).match(/\"([G]{1})\d+/g,'');
+		var restoDivisao = (key.length - 1) % 3;
+		totalPagina = parseInt(Number((key.length - 1) / 3));
 
 		if(restoDivisao > 0 && totalPagina > 0){
 			totalPagina = Number(totalPagina) + 1;
 		}
 
 		var limite = 0;	
-		if(key.length - 2 >= 101){
-			limite = (100 * pagina)+2;
+		if(key.length - 1 > 3){
+			limite = (3 * pagina);
 		}else{
-			limite = key.length;
+			limite = key.length - 1;
 		}
 
-		var inic = 2;
-		if(limite > 100){
-			inic = limite - 100; 
+		var inic = 1;
+		if(limite > 3){
+			inic = limite - 3; 
 		}
 
-		for(var i = inic; i <= limite; i++){
-			if(!global_wb.Sheets.Sheet1['A'+i]){
+		for(var i = inic; i <= limite; i++){		
+			
+			if(!key[i] || !global_wb.Sheets.Sheet1['G'+key[i].replace(/[^0-9]/g,'')]){
 				break;
 			}
 
-			htmlstr += "<tr id=A"+i+">"
+			htmlstr += "<tr id=A"+key[i].replace(/[^0-9]/g,'')+">"
+			
 			for(var y = 0; y < colunTitulo.length; y++){
-				if(global_wb.Sheets.Sheet1[colunTitulo[y]+i]){
-					if(global_wb.Sheets.Sheet1[colunTitulo[y]+i].w){
-						htmlstr += "<td>"+(global_wb.Sheets.Sheet1[colunTitulo[y]+i].w)+"</td>";
+				if(global_wb.Sheets.Sheet1[colunTitulo[y]+key[i].replace(/[^0-9]/g,'')]){
+					if(global_wb.Sheets.Sheet1[colunTitulo[y]+key[i].replace(/[^0-9]/g,'')].w){
+						htmlstr += "<td>"+(global_wb.Sheets.Sheet1[colunTitulo[y]+key[i].replace(/[^0-9]/g,'')].w)+"</td>";
 					} else {
-						htmlstr += "<td>"+(global_wb.Sheets.Sheet1[colunTitulo[y]+i].v)+"</td>";
+						htmlstr += "<td>"+(global_wb.Sheets.Sheet1[colunTitulo[y]+key[i].replace(/[^0-9]/g,'')].v)+"</td>";
 					}
 				} else{
 					htmlstr += "<td></td>";
 				}
 			}
 
-			htmlstr += "</td>";
-
-			htmlstr += "<td><button type='submit' class='btn btn-success btn-sm' data-toggle='modal' data-target='#myModal' onclick=\"detalhar('"+(global_wb.Sheets.Sheet1['A'+i].v)+"')\">Detalhar</button></td>";
+			htmlstr += "<td><button type='submit' class='btn btn-success btn-sm' data-toggle='modal' data-target='#myModal' onclick=\"detalhar('"+(global_wb.Sheets.Sheet1['G'+key[i].replace(/[^0-9]/g,'')].v)+"')\">Detalhar</button></td>";
 
 			htmlstr += "<td>";
-			htmlstr += "<div style='display: none' id='detalhe"+(global_wb.Sheets.Sheet1['G'+i].v)+"'>";
+			htmlstr += "<div style='display: none' id='detalhe"+(global_wb.Sheets.Sheet1['G'+key[i].replace(/[^0-9]/g,'')].v)+"'>";
 			htmlstr += "<table class='table table-striped mt-40'>";
 			htmlstr += "<thead>";
+			htmlstr += "<tr>";
+			htmlstr += "<th>" + "Opção Comercial: " +  global_wb.Sheets.Sheet1['AO'+key[i].replace(/[^0-9]/g,'')].v + "</th>";
+			htmlstr += "<th>" + "Complemento de Opção Comercial: " +  global_wb.Sheets.Sheet1['AC'+key[i].replace(/[^0-9]/g,'')].v + "</th>";
+			htmlstr += "</tr>";
 			htmlstr += "<tr>";
 			htmlstr += "<th>Campo</th>";
 			htmlstr += "<th>De</th>";
@@ -92,33 +116,58 @@ function to_html(paginacao = false) {
 			htmlstr += "<tbody>";			
 
 			for(var k = 0; k < colunDetalhe.length; k=k+3){
-				if(global_wb.Sheets.Sheet1[colunDetalhe[k]+i] && global_wb.Sheets.Sheet1[colunDetalhe[k+1]+i] && String(global_wb.Sheets.Sheet1[colunDetalhe[k]+i].v).trim() != String(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+i].v).trim()){
+				if(global_wb.Sheets.Sheet1[colunDetalhe[k]+key[i].replace(/[^0-9]/g,'')] && global_wb.Sheets.Sheet1[colunDetalhe[k+1]+key[i].replace(/[^0-9]/g,'')] && String(global_wb.Sheets.Sheet1[colunDetalhe[k]+key[i].replace(/[^0-9]/g,'')].v).trim() != String(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+key[i].replace(/[^0-9]/g,'')].v).trim()){
 					htmlstr += "<tr style='background: #FFAAAA'>";
+					
 				} else {
 					htmlstr += "<tr>";
 				}
 
 				if(global_wb.Sheets.Sheet1[colunDetalhe[k]+1]){
-					htmlstr += "<td>"+(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+1].v)+"</td>";
+					if(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+1].v == "ZZCIAEX_apolice"){
+						htmlstr += "<td> CIA EXTERNA </td>";
+					}
+					if(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+1].v == "ZZOPCOM2_parceiro"){
+						continue;
+//						htmlstr += "<td> COMPLEMENTO DE OPÇÃO COMERCIAL </td>";
+					}
+					if(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+1].v == "ZZCIAIN_apolice"){
+						htmlstr += "<td> CIA INTERNA </td>";
+					}
+					if(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+1].v == "ZZOPCOM1_parceiro"){
+						continue;
+//						htmlstr += "<td> OPÇÃO COMERCIAL </td>";
+					}
+					if(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+1].v == "ZZRMINT_parceiro"){
+						htmlstr += "<td> RAMO </td>";
+					}
+					if(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+1].v == "ZZNAPOL_apolice"){
+						htmlstr += "<td> APÓLICE </td>";
+					}
+					if(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+1].v == "ZZRMCAL_parceiro"){
+						htmlstr += "<td> VALOR COMISSÃO </td>";
+					}
+					
+//					htmlstr += "<td>"+(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+1].v)+"</td>";
 				} else{
 					htmlstr += "<td></td>";
 				}
 
-				if(global_wb.Sheets.Sheet1[colunDetalhe[k]+i]){
-					if((global_wb.Sheets.Sheet1[colunDetalhe[k]+i].w)){
-						htmlstr += "<td>"+(global_wb.Sheets.Sheet1[colunDetalhe[k]+i].w)+"</td>";
+				if(global_wb.Sheets.Sheet1[colunDetalhe[k]+key[i].replace(/[^0-9]/g,'')]){
+					if((global_wb.Sheets.Sheet1[colunDetalhe[k]+key[i].replace(/[^0-9]/g,'')].w)){
+						htmlstr += "<td>"+(global_wb.Sheets.Sheet1[colunDetalhe[k]+key[i].replace(/[^0-9]/g,'')].w)+"</td>";
 					} else {
-						htmlstr += "<td>"+(global_wb.Sheets.Sheet1[colunDetalhe[k]+i].v)+"</td>";
+						htmlstr += "<td>"+(global_wb.Sheets.Sheet1[colunDetalhe[k]+key[i].replace(/[^0-9]/g,'')].v)+"</td>";
 					}
 				} else{
 					htmlstr += "<td></td>";
 				}
 
-				if(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+i]){
-					if(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+i].w){
-						htmlstr += "<td>"+(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+i].w)+"</td>";
+				if(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+key[i].replace(/[^0-9]/g,'')]){
+					if(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+key[i].replace(/[^0-9]/g,'')].w){
+						htmlstr += "<td>"+(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+key[i].replace(/[^0-9]/g,'')].w)+"</td>";
 					} else {
-						htmlstr += "<td>"+(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+i].v)+"</td>";
+						htmlstr += "<td>"+(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+key[i].replace(/[^0-9]/g,'')].v)+"</td>";
 					}
 				} else{
 					htmlstr += "<td></td>";
@@ -133,6 +182,7 @@ function to_html(paginacao = false) {
 			htmlstr += "</td>";
 
 			htmlstr += "</tr>"
+
 		}
 		
 		HTMLOUT.innerHTML = htmlstr;
@@ -246,11 +296,11 @@ function buscar() {
 				
 				htmlstr += "<tr id=A"+i+">"
 				for(var y = 0; y < colunTitulo.length; y++){
-					if(global_wb.Sheets.Sheet1[colunTitulo[y]+i]){
-						if(global_wb.Sheets.Sheet1[colunTitulo[y]+i].w){
-							htmlstr += "<td>"+(global_wb.Sheets.Sheet1[colunTitulo[y]+i].w)+"</td>";
+					if(global_wb.Sheets.Sheet1[colunTitulo[y]+key.replace(/[^0-9]/g,'')]){
+						if(global_wb.Sheets.Sheet1[colunTitulo[y]+key.replace(/[^0-9]/g,'')].w){
+							htmlstr += "<td>"+(global_wb.Sheets.Sheet1[colunTitulo[y]+key.replace(/[^0-9]/g,'')].w)+"</td>";
 						} else {
-							htmlstr += "<td>"+(global_wb.Sheets.Sheet1[colunTitulo[y]+i].v)+"</td>";
+							htmlstr += "<td>"+(global_wb.Sheets.Sheet1[colunTitulo[y]+key.replace(/[^0-9]/g,'')].v)+"</td>";
 						}
 					} else{
 						htmlstr += "<td></td>";
@@ -259,12 +309,16 @@ function buscar() {
 
 				htmlstr += "</td>";
 
-				htmlstr += "<td><button type='submit' class='btn btn-success btn-sm' data-toggle='modal' data-target='#myModal' onclick=\"detalhar('"+(global_wb.Sheets.Sheet1['A'+i].v)+"')\">Detalhar</button></td>";
+				htmlstr += "<td><button type='submit' class='btn btn-success btn-sm' data-toggle='modal' data-target='#myModal' onclick=\"detalhar('"+(global_wb.Sheets.Sheet1['G'+key.replace(/[^0-9]/g,'')].v)+"')\">Detalhar</button></td>";
 
 				htmlstr += "<td>";
-				htmlstr += "<div style='display: none' id='detalhe"+(global_wb.Sheets.Sheet1['G'+i].v)+"'>";
+				htmlstr += "<div style='display: none' id='detalhe"+(global_wb.Sheets.Sheet1['G'+key.replace(/[^0-9]/g,'')].v)+"'>";
 				htmlstr += "<table class='table table-striped mt-40'>";
 				htmlstr += "<thead>";
+				htmlstr += "<tr>";
+				htmlstr += "<th>" + "Opção Comercial: " +  global_wb.Sheets.Sheet1['AO'+key.replace(/[^0-9]/g,'')].v + "</th>";
+				htmlstr += "<th>" + "Complemento de Opção Comercial: " +  global_wb.Sheets.Sheet1['AC'+key.replace(/[^0-9]/g,'')].v + "</th>";
+				htmlstr += "</tr>";
 				htmlstr += "<tr>";
 				htmlstr += "<th>Campo</th>";
 				htmlstr += "<th>De</th>";
@@ -274,33 +328,56 @@ function buscar() {
 				htmlstr += "<tbody>";			
 
 				for(var k = 0; k < colunDetalhe.length; k=k+3){
-					if(global_wb.Sheets.Sheet1[colunDetalhe[k]+i] && global_wb.Sheets.Sheet1[colunDetalhe[k+1]+i] && String(global_wb.Sheets.Sheet1[colunDetalhe[k]+i].v).trim() != String(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+i].v).trim()){
+					if(global_wb.Sheets.Sheet1[colunDetalhe[k]+key.replace(/[^0-9]/g,'')] && global_wb.Sheets.Sheet1[colunDetalhe[k+1]+key.replace(/[^0-9]/g,'')] && String(global_wb.Sheets.Sheet1[colunDetalhe[k]+key.replace(/[^0-9]/g,'')].v).trim() != String(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+key.replace(/[^0-9]/g,'')].v).trim()){
 						htmlstr += "<tr style='background: #FFAAAA'>";
 					} else {
 						htmlstr += "<tr>";
 					}
 
 					if(global_wb.Sheets.Sheet1[colunDetalhe[k]+1]){
-						htmlstr += "<td>"+(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+1].v)+"</td>";
+						if(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+1].v == "ZZCIAEX_apolice"){
+							htmlstr += "<td> CIA EXTERNA </td>";
+						}
+						if(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+1].v == "ZZOPCOM2_parceiro"){
+							continue;
+//							htmlstr += "<td> COMPLEMENTO DE OPÇÃO COMERCIAL </td>";
+						}
+						if(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+1].v == "ZZCIAIN_apolice"){
+							htmlstr += "<td> CIA INTERNA </td>";
+						}
+						if(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+1].v == "ZZOPCOM1_parceiro"){
+							continue;
+//							htmlstr += "<td> OPÇÃO COMERCIAL </td>";
+						}
+						if(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+1].v == "ZZRMINT_parceiro"){
+							htmlstr += "<td> RAMO </td>";
+						}
+						if(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+1].v == "ZZNAPOL_apolice"){
+							htmlstr += "<td> APÓLICE </td>";
+						}
+						if(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+1].v == "ZZRMCAL_parceiro"){
+							htmlstr += "<td> VALOR COMISSÃO </td>";
+						}
+//						htmlstr += "<td>"+(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+1].v)+"</td>";
 					} else{
 						htmlstr += "<td></td>";
 					}
 
-					if(global_wb.Sheets.Sheet1[colunDetalhe[k]+i]){
-						if((global_wb.Sheets.Sheet1[colunDetalhe[k]+i].w)){
-							htmlstr += "<td>"+(global_wb.Sheets.Sheet1[colunDetalhe[k]+i].w)+"</td>";
+					if(global_wb.Sheets.Sheet1[colunDetalhe[k]+key.replace(/[^0-9]/g,'')]){
+						if((global_wb.Sheets.Sheet1[colunDetalhe[k]+key.replace(/[^0-9]/g,'')].w)){
+							htmlstr += "<td>"+(global_wb.Sheets.Sheet1[colunDetalhe[k]+key.replace(/[^0-9]/g,'')].w)+"</td>";
 						} else {
-							htmlstr += "<td>"+(global_wb.Sheets.Sheet1[colunDetalhe[k]+i].v)+"</td>";
+							htmlstr += "<td>"+(global_wb.Sheets.Sheet1[colunDetalhe[k]+key.replace(/[^0-9]/g,'')].v)+"</td>";
 						}
 					} else{
 						htmlstr += "<td></td>";
 					}
 
-					if(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+i]){
-						if(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+i].w){
-							htmlstr += "<td>"+(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+i].w)+"</td>";
+					if(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+key.replace(/[^0-9]/g,'')]){
+						if(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+key.replace(/[^0-9]/g,'')].w){
+							htmlstr += "<td>"+(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+key.replace(/[^0-9]/g,'')].w)+"</td>";
 						} else {
-							htmlstr += "<td>"+(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+i].v)+"</td>";
+							htmlstr += "<td>"+(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+key.replace(/[^0-9]/g,'')].v)+"</td>";
 						}
 					} else{
 						htmlstr += "<td></td>";
