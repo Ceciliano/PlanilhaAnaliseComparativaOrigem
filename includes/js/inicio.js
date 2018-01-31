@@ -80,9 +80,7 @@ function to_html(paginacao = false) {
 
 		for(var i = inic; i <= limite; i++){		
 			
-			if($("#detalhe"+global_wb.Sheets.Sheet1['G'+key[i].replace(/[^0-9]/g,'')].v).length > 0){
-				alert("igual");
-				
+			if($("#detalhe"+global_wb.Sheets.Sheet1['G'+key[i].replace(/[^0-9]/g,'')].v).length > 0){				
 				htmlstr += "<tr>";
 				
 				if(global_wb.Sheets.Sheet1['AO'+key[i].replace(/[^0-9]/g,'')]){
