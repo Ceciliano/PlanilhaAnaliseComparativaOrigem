@@ -30,7 +30,14 @@ var process_wb = (function() {
 			
 			if(!wb.Sheets.Sheet1['A'+i]){
 				break;
-			}	
+			}
+			
+			//somente considerar CSIT_REG_MOVTO_SAP_PARCEIRO 5 e 6
+			if(i != 1 && wb.Sheets.Sheet1['F'+i]){
+				if(wb.Sheets.Sheet1['F'+i].v != 5 && wb.Sheets.Sheet1['F'+i].v != 6){
+					continue;
+				}
+			}
 
 			if(i != 1 && wb.Sheets.Sheet1['U'+i].v == 1 && wb.Sheets.Sheet1['AD'+i].v == 1 && wb.Sheets.Sheet1['AJ'+i].v == 1 && wb.Sheets.Sheet1['AP'+i].v == 1 && wb.Sheets.Sheet1['AS'+i].v == 1 && wb.Sheets.Sheet1['CM'+i].v == 1){
 				continue;
@@ -136,7 +143,7 @@ function to_html(paginacao = false) {
 					} else{
 						htmlstr += "<td></td>";
 					}
-
+					
 					if(global_wb.Sheets.Sheet1[colunDetalhe[k]+key[i].replace(/[^0-9]/g,'')]){
 						if((global_wb.Sheets.Sheet1[colunDetalhe[k]+key[i].replace(/[^0-9]/g,'')].w)){
 							htmlstr += "<td>"+(global_wb.Sheets.Sheet1[colunDetalhe[k]+key[i].replace(/[^0-9]/g,'')].w)+"</td>";
@@ -172,7 +179,18 @@ function to_html(paginacao = false) {
 			for(var y = 0; y < colunTitulo.length; y++){
 				if(global_wb.Sheets.Sheet1[colunTitulo[y]+key[i].replace(/[^0-9]/g,'')]){
 					if(global_wb.Sheets.Sheet1[colunTitulo[y]+key[i].replace(/[^0-9]/g,'')].w){
-						htmlstr += "<td>"+(global_wb.Sheets.Sheet1[colunTitulo[y]+key[i].replace(/[^0-9]/g,'')].w)+"</td>";
+						//Se é a coluna Status Registro
+						if(colunTitulo[y]+key[i].replace(/[^0-9]/g,'') == "I"+key[i].replace(/[^0-9]/g,'')){
+							var valorStatus = (global_wb.Sheets.Sheet1[colunTitulo[y]+key[i].replace(/[^0-9]/g,'')].w);
+							if(valorStatus == 5){
+								htmlstr += "<td>5-Sucesso</td>"
+							}else{
+								htmlstr += "<td>6-Rejeitado SAP</td>"
+							}
+						}else{
+							htmlstr += "<td>"+(global_wb.Sheets.Sheet1[colunTitulo[y]+key[i].replace(/[^0-9]/g,'')].w)+"</td>";
+						}
+						
 					} else {
 						htmlstr += "<td>"+(global_wb.Sheets.Sheet1[colunTitulo[y]+key[i].replace(/[^0-9]/g,'')].v)+"</td>";
 					}
