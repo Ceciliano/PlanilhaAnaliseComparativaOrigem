@@ -16,7 +16,7 @@ var pagina = 1;
 var totalPagina = 0;
 var colunTitulo = ['G','I','J','K'];
 var colunDetalhe = ['S','T','U','AB','AC','AD','AH','AI','AJ','AN','AO','AP','AQ','AR','AS','CK','CL','CM',
-					'DV', 'DW', 'DX'];
+					'DY','DW','DV'];
 
 
 var process_wb = (function() {
@@ -236,11 +236,30 @@ function to_html(paginacao = false) {
 					continue;
 				}
 
-				if((global_wb.Sheets.Sheet1[colunDetalhe[k]+key[i].replace(/[^0-9]/g,'')] && global_wb.Sheets.Sheet1[colunDetalhe[k+1]+key[i].replace(/[^0-9]/g,'')] && 
+				//regra de "VALOR COMISSÃO" no detalhe
+				if(colunDetalhe[k] == 'DY'){
+					var DY = global_wb.Sheets.Sheet1[colunDetalhe[k]+key[i].replace(/[^0-9]/g,'')].w;
+					var DW = global_wb.Sheets.Sheet1[colunDetalhe[k+1]+key[i].replace(/[^0-9]/g,'')].w;
+					var DV = global_wb.Sheets.Sheet1[colunDetalhe[k+2]+key[i].replace(/[^0-9]/g,'')].w;
+					
+					if( DY == 0){
+						if(DY != DW) {
+							htmlstr += "<tr style='background: #FFAAAA'>";
+						}else{
+							htmlstr += "<tr>";
+						}							
+					}else{
+						if (DV != DW){
+							htmlstr += "<tr style='background: #FFAAAA'>";
+						}else{
+							htmlstr += "<tr>";
+						}
+					}
+				}else if((global_wb.Sheets.Sheet1[colunDetalhe[k]+key[i].replace(/[^0-9]/g,'')] &&
+				       global_wb.Sheets.Sheet1[colunDetalhe[k+1]+key[i].replace(/[^0-9]/g,'')] && 
 						String(global_wb.Sheets.Sheet1[colunDetalhe[k]+key[i].replace(/[^0-9]/g,'')].v).trim() != String(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+key[i].replace(/[^0-9]/g,'')].v).trim()) || 
 						global_wb.Sheets.Sheet1[colunDetalhe[k+2]+key[i].replace(/[^0-9]/g,'')].v == 0){
 					htmlstr += "<tr style='background: #FFAAAA'>";
-					
 				} else {
 					htmlstr += "<tr>";
 				}
@@ -513,7 +532,16 @@ function buscar() {
 					for(var h = 0; h < colunTitulo.length; h++){
 						if(global_wb.Sheets.Sheet1[colunTitulo[h]+y]){
 							if(global_wb.Sheets.Sheet1[colunTitulo[h]+y].w){
-								htmlstr += "<td>"+(global_wb.Sheets.Sheet1[colunTitulo[h]+y].w)+"</td>";
+								if(colunTitulo[h]+y.replace(/[^0-9]/g,'') == "I"+y){
+									var valorStatus = (global_wb.Sheets.Sheet1[colunTitulo[h]+y].w);
+									if(valorStatus == 5){
+										htmlstr += "<td>5-Sucesso</td>"
+									}else{
+										htmlstr += "<td>6-Rejeitado SAP</td>"
+									}
+								}else{
+									htmlstr += "<td>"+(global_wb.Sheets.Sheet1[colunTitulo[h]+y].w)+"</td>";
+								}
 							} else {
 								htmlstr += "<td>"+(global_wb.Sheets.Sheet1[colunTitulo[h]+y].v)+"</td>";
 							}
