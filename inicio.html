@@ -29,8 +29,9 @@
 		<div class="clearfix"></div>
 		<form class="mt-40">
 			<div class="form-group row">
-				<div class="col-6">
-					<input type="file" name="xlfile" id="xlf" style="width: 800px"/>
+				<div class="col-12">
+					<input type="file" name="xlfile" id="xlf" style="width: 800px" onChange="$('#btnNewFile').show();$('#xlf').hide();"/>
+					<input type="button" id="btnNewFile" onClick="location.href='inicio.html';" style="display:none;" value="Rodar novo Arquivo" class="btn btn-primary"/>
 				</div>
 			</div>
 			<hr class="mt-40" />
