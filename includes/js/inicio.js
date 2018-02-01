@@ -14,7 +14,7 @@ var XW = {
 var global_wb = {Sheets:{Sheet1:{}}};
 var pagina = 1;
 var totalPagina = 0;
-var colunTitulo = ['G','I','J','K','L'];
+var colunTitulo = ['G','I','J','K'];
 var colunDetalhe = ['S','T','U','AB','AC','AD','AH','AI','AJ','AN','AO','AP','AQ','AR','AS','CK','CL','CM',
 					'DV', 'DW', 'DX'];
 
