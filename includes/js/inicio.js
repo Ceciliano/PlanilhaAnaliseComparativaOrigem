@@ -115,7 +115,26 @@ function to_html(paginacao = false) {
 						continue;
 					}
 
-					if((global_wb.Sheets.Sheet1[colunDetalhe[k]+key[i].replace(/[^0-9]/g,'')] && global_wb.Sheets.Sheet1[colunDetalhe[k+1]+key[i].replace(/[^0-9]/g,'')] && 
+					if(colunDetalhe[k] == 'DY'){
+						var DY = global_wb.Sheets.Sheet1[colunDetalhe[k]+key[i].replace(/[^0-9]/g,'')].w;
+						var DW = global_wb.Sheets.Sheet1[colunDetalhe[k+1]+key[i].replace(/[^0-9]/g,'')].w;
+						var DV = global_wb.Sheets.Sheet1[colunDetalhe[k+2]+key[i].replace(/[^0-9]/g,'')].w;
+						
+						if( DY == 0){
+							if(DY != DW) {
+								htmlstr += "<tr style='background: #FFAAAA'>";
+							}else{
+								htmlstr += "<tr>";
+							}							
+						}else{
+							if (DV != DW){
+								htmlstr += "<tr style='background: #FFAAAA'>";
+							}else{
+								htmlstr += "<tr>";
+							}
+						}
+
+					}else if((global_wb.Sheets.Sheet1[colunDetalhe[k]+key[i].replace(/[^0-9]/g,'')] && global_wb.Sheets.Sheet1[colunDetalhe[k+1]+key[i].replace(/[^0-9]/g,'')] && 
 							String(global_wb.Sheets.Sheet1[colunDetalhe[k]+key[i].replace(/[^0-9]/g,'')].v).trim() != String(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+key[i].replace(/[^0-9]/g,'')].v).trim()) || 
 							global_wb.Sheets.Sheet1[colunDetalhe[k+2]+key[i].replace(/[^0-9]/g,'')].v == 0){
 						htmlstr += "<tr style='background: #FFAAAA'>";						
@@ -467,8 +486,28 @@ function buscar() {
 							if(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+1].v == "ZZOPCOM2_parceiro" || global_wb.Sheets.Sheet1[colunDetalhe[k+1]+1].v == "ZZOPCOM1_parceiro"){
 								continue;
 							}
+
+							//regra de "VALOR COMISSÃO" no detalhe
+							if(colunDetalhe[k] == 'DY'){
+								var DY = global_wb.Sheets.Sheet1[colunDetalhe[k]+key[i].replace(/[^0-9]/g,'')].w;
+								var DW = global_wb.Sheets.Sheet1[colunDetalhe[k+1]+key[i].replace(/[^0-9]/g,'')].w;
+								var DV = global_wb.Sheets.Sheet1[colunDetalhe[k+2]+key[i].replace(/[^0-9]/g,'')].w;
+								
+								if( DY == 0){
+									if(DY != DW) {
+										htmlstr += "<tr style='background: #FFAAAA'>";
+									}else{
+										htmlstr += "<tr>";
+									}							
+								}else{
+									if (DV != DW){
+										htmlstr += "<tr style='background: #FFAAAA'>";
+									}else{
+										htmlstr += "<tr>";
+									}
+								}
 	
-							if((global_wb.Sheets.Sheet1[colunDetalhe[k]+y] && global_wb.Sheets.Sheet1[colunDetalhe[k+1]+y] && 
+							}else if((global_wb.Sheets.Sheet1[colunDetalhe[k]+y] && global_wb.Sheets.Sheet1[colunDetalhe[k+1]+y] && 
 									String(global_wb.Sheets.Sheet1[colunDetalhe[k]+y].v).trim() != String(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+y].v).trim()) || 
 									global_wb.Sheets.Sheet1[colunDetalhe[k+2]+y].v == 0){
 								htmlstr += "<tr style='background: #FFAAAA'>";
@@ -586,8 +625,28 @@ function buscar() {
 						if(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+1].v == "ZZOPCOM2_parceiro" || global_wb.Sheets.Sheet1[colunDetalhe[k+1]+1].v == "ZZOPCOM1_parceiro"){
 							continue;
 						}
+
+						//regra de "VALOR COMISSÃO" no detalhe
+						if(colunDetalhe[k] == 'DY'){
+							var DY = global_wb.Sheets.Sheet1[colunDetalhe[k]+key[i].replace(/[^0-9]/g,'')].w;
+							var DW = global_wb.Sheets.Sheet1[colunDetalhe[k+1]+key[i].replace(/[^0-9]/g,'')].w;
+							var DV = global_wb.Sheets.Sheet1[colunDetalhe[k+2]+key[i].replace(/[^0-9]/g,'')].w;
+							
+							if( DY == 0){
+								if(DY != DW) {
+									htmlstr += "<tr style='background: #FFAAAA'>";
+								}else{
+									htmlstr += "<tr>";
+								}							
+							}else{
+								if (DV != DW){
+									htmlstr += "<tr style='background: #FFAAAA'>";
+								}else{
+									htmlstr += "<tr>";
+								}
+							}
 						
-						if((global_wb.Sheets.Sheet1[colunDetalhe[k]+y] && global_wb.Sheets.Sheet1[colunDetalhe[k+1]+y] && 
+						}else if((global_wb.Sheets.Sheet1[colunDetalhe[k]+y] && global_wb.Sheets.Sheet1[colunDetalhe[k+1]+y] && 
 							String(global_wb.Sheets.Sheet1[colunDetalhe[k]+y].v).trim() != String(global_wb.Sheets.Sheet1[colunDetalhe[k+1]+y].v).trim()) || 
 							global_wb.Sheets.Sheet1[colunDetalhe[k+2]+y].v == 0){
 							htmlstr += "<tr style='background: #FFAAAA'>";
